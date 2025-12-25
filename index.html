@@ -7,43 +7,62 @@
 <style>
 body{
   margin:0;
-  font-family:system-ui, -apple-system, BlinkMacSystemFont;
-  background:linear-gradient(135deg,#eaf1ff,#ffffff);
+  font-family:system-ui, -apple-system;
+  background:linear-gradient(135deg,#eef3ff,#ffffff);
   color:#222;
 }
 header{
   text-align:center;
   padding:30px 10px;
 }
-h1{margin:0;font-size:2.3rem}
+h1{margin:0;font-size:2.4rem}
+
 .container{
-  max-width:1200px;
+  max-width:900px;
   margin:auto;
   padding:20px;
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:20px;
 }
+
 .card{
   background:#fff;
-  border-radius:16px;
+  border-radius:18px;
   padding:20px;
+  margin-bottom:20px;
   box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
-input{
+
+input,button{
   width:100%;
-  padding:16px;
-  font-size:1.1rem;
+  padding:14px;
+  font-size:1.05rem;
   border-radius:12px;
   border:1px solid #ccc;
+  margin-top:8px;
 }
-ul{padding-left:20px}
-li{margin:6px 0}
+
+button{
+  background:#4f7cff;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
 #suggestions div{
   padding:8px;
   cursor:pointer;
 }
 #suggestions div:hover{background:#eef}
+
+ul{padding-left:18px}
+li{margin:6px 0}
+
+.admin{
+  display:none;
+  margin-top:10px;
+  border-top:1px dashed #ccc;
+  padding-top:10px;
+}
+
 footer{
   text-align:center;
   padding:20px;
@@ -61,9 +80,8 @@ footer{
 
 <div class="container">
 
-<!-- 🔍 검색 -->
 <div class="card">
-  <input id="search" placeholder="이름 입력 (2글자 이상)">
+  <input id="search" placeholder="성 포함 2글자 이상 입력">
   <div id="suggestions"></div>
 
   <h3>🔎 검색 결과</h3>
@@ -71,51 +89,56 @@ footer{
 
   <h3>📖 기호 설명</h3>
   <ul>
-    <li>♡ : 현재 사귀는 중</li>
-    <li>|♡| : 깨진 연애</li>
-    <li>&lt;-&gt; : 서로 짝사랑</li>
-    <li>-&gt; : 짝사랑</li>
+    <li>♡ 현재 사귀는 중</li>
+    <li>💔 과거 연애</li>
+    <li>🔁 서로 짝사랑</li>
+    <li>➝ 짝사랑</li>
   </ul>
 </div>
 
-<!-- 📊 사이드 -->
-<div>
-
-  <div class="card">
-    <h3>🔥 인기순위 TOP 10</h3>
-    <ul id="rank"></ul>
-  </div>
-
-  <div class="card" style="margin-top:20px">
-    <h3>❤️ 현재 사귀는 중</h3>
-    <ul id="dating"></ul>
-
-    <h3>💔 깨진 연애</h3>
-    <ul id="breakup"></ul>
-
-    <h3>🔁 서로 짝사랑</h3>
-    <ul id="mutual"></ul>
-  </div>
-
+<div class="card">
+  <h3>🔥 인기순위 TOP 10</h3>
+  <ul id="rank"></ul>
 </div>
+
+<div class="card">
+  <h3>❤️ 현재 연애</h3>
+  <ul id="dating"></ul>
+
+  <h3>💔 과거 연애</h3>
+  <ul id="breakup"></ul>
+
+  <h3>🔁 서로 짝사랑</h3>
+  <ul id="mutual"></ul>
+</div>
+
+<div class="card">
+  <h3>🔐 관리자</h3>
+  <input id="adminId" placeholder="아이디">
+  <input id="adminPw" type="password" placeholder="비밀번호">
+  <button onclick="login()">로그인</button>
+
+  <div class="admin" id="adminPanel">
+    <p>관리자 모드 활성화</p>
+    <input id="from" placeholder="이름 A">
+    <input id="to" placeholder="이름 B">
+    <input id="type" placeholder="dating / breakup / mutual / crush">
+    <button onclick="addRelation()">추가</button>
+  </div>
+</div>
+
 </div>
 
 <footer>
-  버전 v1.0.0 · 데이터 기준일 2025.12.24
+  v1.1.0 · 데이터 기준 2025.12.24
 </footer>
 
 <script>
-/* =========================
-   1️⃣ 관계 데이터
-========================= */
-const relations = [
-  // 현재 연애 ♡
-  {from:"강명구",to:"황혜빈",type:"dating"},
-  {from:"최시훈",to:"전준형",type:"dating"},
-  {from:"안진우",to:"최하린",type:"dating"},
-  {from:"이지우",to:"안진우",type:"dating"},
+const ADMIN_ID="ak5465";
+const ADMIN_PW="shangusdnswl@A1";
 
-  // 깨진 연애 |♡|
+const relations = [
+  // |♡| 깨진 연애
   {from:"조민준",to:"문효진",type:"breakup"},
   {from:"양제현",to:"조연아",type:"breakup"},
   {from:"손지호",to:"민효주",type:"breakup"},
@@ -125,10 +148,16 @@ const relations = [
   {from:"강명구",to:"문효진",type:"breakup"},
   {from:"방훈테",to:"임유리",type:"breakup"},
 
-  // 서로 짝사랑 <->
+  // ♡ 현재 연애
+  {from:"강명구",to:"황혜빈",type:"dating"},
+  {from:"최시훈",to:"전준형",type:"dating"},
+  {from:"안진우",to:"최하린",type:"dating"},
+  {from:"이지우",to:"안진우",type:"dating"},
+
+  // <-> 서로 짝사랑
   {from:"최시훈",to:"유동우",type:"mutual"},
 
-  // 짝사랑 ->
+  // -> 짝사랑
   {from:"민정호",to:"이수현",type:"crush"},
   {from:"민정호",to:"조연아",type:"crush"},
   {from:"김도엽",to:"최하린",type:"crush"},
@@ -145,16 +174,16 @@ const relations = [
   {from:"민효주",to:"장건우",type:"crush"},
   {from:"민효주",to:"김도엽",type:"crush"},
   {from:"이서윤",to:"전준형",type:"crush"},
-  {from:"이서윤",to:"정유준",type:"crush"},
   {from:"류지우",to:"김정훈",type:"crush"},
+  {from:"이서윤",to:"정유준",type:"crush"},
   {from:"문효진",to:"전준형",type:"crush"},
   {from:"허동하",to:"손예원",type:"crush"},
-  {from:"허동하",to:"이수현",type:"crush"},
-  {from:"허동하",to:"김규리",type:"crush"},
-  {from:"허동하",to:"최하린",type:"crush"},
   {from:"김준우",to:"최하린",type:"crush"},
   {from:"김가영",to:"노무현",type:"crush"},
+  {from:"허동하",to:"이수현",type:"crush"},
+  {from:"허동하",to:"김규리",type:"crush"},
   {from:"김동건",to:"김재희",type:"crush"},
+  {from:"허동하",to:"최하린",type:"crush"},
   {from:"박경담",to:"조연아",type:"crush"},
   {from:"조하영",to:"유??",type:"crush"},
   {from:"김도원",to:"심채원",type:"crush"},
@@ -163,9 +192,6 @@ const relations = [
   {from:"김민서",to:"이예나",type:"crush"}
 ];
 
-/* =========================
-   2️⃣ 기본 변수
-========================= */
 const search=document.getElementById("search");
 const result=document.getElementById("result");
 const suggestions=document.getElementById("suggestions");
@@ -176,9 +202,6 @@ const rankEl=document.getElementById("rank");
 
 const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
 
-/* =========================
-   3️⃣ 검색 + 자동추천
-========================= */
 search.addEventListener("input",()=>{
   const q=search.value.trim();
   result.innerHTML="";
@@ -195,36 +218,30 @@ search.addEventListener("input",()=>{
   relations.filter(r=>r.from===q||r.to===q).forEach(r=>{
     const icon =
       r.type==="dating" ? "♡" :
-      r.type==="breakup" ? "|♡|" :
-      r.type==="mutual" ? "<->" : "->";
-    const li=document.createElement("li");
-    li.textContent=`${r.from} ${icon} ${r.to}`;
-    result.appendChild(li);
+      r.type==="breakup" ? "💔" :
+      r.type==="mutual" ? "🔁" : "➝";
+    result.innerHTML+=`<li>${r.from} ${icon} ${r.to}</li>`;
   });
 });
 
-/* =========================
-   4️⃣ 목록 렌더링
-========================= */
-function renderLists(){
+function render(){
   dating.innerHTML="";
   breakup.innerHTML="";
   mutual.innerHTML="";
   relations.forEach(r=>{
-    const li=document.createElement("li");
-    li.textContent=`${r.from} - ${r.to}`;
-    if(r.type==="dating") dating.appendChild(li);
-    if(r.type==="breakup") breakup.appendChild(li);
-    if(r.type==="mutual") mutual.appendChild(li);
+    if(r.type==="dating") dating.innerHTML+=`<li>${r.from} ♡ ${r.to}</li>`;
+    if(r.type==="breakup") breakup.innerHTML+=`<li>${r.from} 💔 ${r.to}</li>`;
+    if(r.type==="mutual") mutual.innerHTML+=`<li>${r.from} 🔁 ${r.to}</li>`;
   });
 }
 
-/* =========================
-   5️⃣ 인기순위
-========================= */
 function rank(){
   const score={};
   relations.forEach(r=>{
+    if(r.type==="dating"||r.type==="breakup"){
+      score[r.from]=(score[r.from]||0)+1;
+      score[r.to]=(score[r.to]||0)+1;
+    }
     if(r.type==="crush"){
       score[r.to]=(score[r.to]||0)+1;
     }
@@ -236,7 +253,23 @@ function rank(){
     .join("");
 }
 
-renderLists();
+function login(){
+  if(adminId.value===ADMIN_ID&&adminPw.value===ADMIN_PW){
+    document.getElementById("adminPanel").style.display="block";
+  }else alert("로그인 실패");
+}
+
+function addRelation(){
+  relations.push({
+    from:from.value,
+    to:to.value,
+    type:type.value
+  });
+  render();
+  rank();
+}
+
+render();
 rank();
 </script>
 
