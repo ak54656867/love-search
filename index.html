@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>관계 검색</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input { padding: 8px; width: 200px; }
+    .dating { color: red; }
+    .broken { color: gray; }
+    .crush { color: blue; }
+    .mutual { color: purple; }
+  </style>
+</head>
+<body>
+
+<h2>사람 이름 검색</h2>
+<input id="search" placeholder="이름 입력">
+<button onclick="search()">검색</button>
+
+<ul id="result"></ul>
+
+<script>
+const data = [
+  { from: "강명구", to: "문효진", type: "broken" },
+  { from: "강명구", to: "황혜빈", type: "dating" },
+  { from: "김동윤", to: "류지우", type: "crush" },
+  { from: "최시훈", to: "유동우", type: "mutual" }
+];
+
+const icons = {
+  dating: "❤️",
+  broken: "💔",
+  crush: "👉",
+  mutual: "🔁"
+};
+
+function search() {
+  const name = document.getElementById("search").value.trim();
+  const result = document.getElementById("result");
+  result.innerHTML = "";
+
+  data
+    .filter(r => r.from === name || r.to === name)
+    .forEach(r => {
+      const li = document.createElement("li");
+      li.className = r.type;
+      li.textContent = `${r.from} ${icons[r.type]} ${r.to}`;
+      result.appendChild(li);
+    });
+}
+</script>
+
+</body>
+</html>
