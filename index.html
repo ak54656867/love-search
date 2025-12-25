@@ -10,34 +10,22 @@
     background: linear-gradient(135deg, #eef2ff, #fdf2f8);
     display: flex;
     justify-content: center;
-    padding-top: 60px;
+    padding-top: 50px;
   }
 
   .card {
     background: white;
-    width: 460px;
+    width: 480px;
     padding: 26px;
     border-radius: 18px;
     box-shadow: 0 20px 40px rgba(0,0,0,.12);
+    position: relative;
   }
 
-  h2 {
-    text-align: center;
-    margin-bottom: 6px;
-  }
+  h2 { text-align: center; margin-bottom: 6px; }
+  .desc { text-align: center; font-size: 14px; color: #666; }
 
-  .desc {
-    text-align: center;
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 18px;
-  }
-
-  .search-box {
-    display: flex;
-    gap: 8px;
-  }
-
+  .search-box { display: flex; gap: 8px; margin-top: 14px; }
   input {
     flex: 1;
     padding: 12px;
@@ -45,7 +33,6 @@
     border-radius: 12px;
     border: 1px solid #ccc;
   }
-
   button {
     padding: 12px 18px;
     border: none;
@@ -56,22 +43,13 @@
     cursor: pointer;
   }
 
-  button:hover {
-    background: #4f46e5;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 22px;
-  }
-
+  ul { list-style: none; padding: 0; margin-top: 18px; }
   li {
     padding: 12px;
     border-radius: 12px;
     margin-bottom: 10px;
     background: #f8fafc;
-    font-size: 15px;
+    cursor: pointer;
   }
 
   .dating { border-left: 6px solid #ef4444; }
@@ -79,40 +57,56 @@
   .crush  { border-left: 6px solid #3b82f6; }
   .mutual { border-left: 6px solid #a855f7; }
 
-  .empty {
-    text-align: center;
-    color: #777;
-    margin-top: 20px;
+  .autocomplete {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: calc(100% - 52px);
+    top: 118px;
+    left: 26px;
+    z-index: 10;
+    max-height: 160px;
+    overflow-y: auto;
   }
 
-  .legend {
-    margin-top: 14px;
-    font-size: 13px;
-    color: #555;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
+  .autocomplete div {
+    padding: 10px;
+    cursor: pointer;
   }
+
+  .autocomplete div:hover {
+    background: #eef2ff;
+  }
+
+  .rank {
+    margin-top: 20px;
+    font-size: 14px;
+    background: #f1f5f9;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .empty { text-align: center; color: #777; margin-top: 14px; }
 </style>
 </head>
 
 <body>
 <div class="card">
   <h2>💘 사랑 관계 검색</h2>
-  <div class="desc">이름을 입력하면 관련된 모든 관계가 나와요</div>
+  <div class="desc">성만 입력해도 자동완성됩니다</div>
 
   <div class="search-box">
     <input id="search" placeholder="이름 입력">
     <button onclick="search()">검색</button>
   </div>
 
+  <div id="auto" class="autocomplete" style="display:none"></div>
+
   <ul id="result"></ul>
   <div id="empty" class="empty"></div>
 
-  <div class="legend">
-    ❤️ 사귀는 중 &nbsp; 💔 깨짐 &nbsp; 👉 짝사랑 &nbsp; 🔁 서로
-  </div>
+  <div class="rank" id="rank"></div>
 </div>
 
 <script>
@@ -165,65 +159,81 @@ const rawText = `
 김민서 -> 이예나
 `;
 
-const typeMap = {
-  "♡": "dating",
-  "|♡|": "broken",
-  "->": "crush",
-  "<->": "mutual"
-};
+const typeMap = { "♡":"dating", "|♡|":"broken", "->":"crush", "<->":"mutual" };
+const icons = { dating:"❤️", broken:"💔", crush:"👉", mutual:"🔁" };
 
-const icons = {
-  dating: "❤️",
-  broken: "💔",
-  crush: "👉",
-  mutual: "🔁"
-};
-
-const data = rawText
-  .trim()
-  .split("\n")
-  .map(line => {
-    line = line.trim();
-    for (const symbol in typeMap) {
-      if (line.includes(symbol)) {
-        const [from, to] = line.split(symbol).map(s => s.trim());
-        return { from, to, type: typeMap[symbol] };
-      }
+const data = rawText.trim().split("\n").map(l=>{
+  for (let s in typeMap) {
+    if (l.includes(s)) {
+      const [from,to]=l.split(s).map(x=>x.trim());
+      return {from,to,type:typeMap[s]};
     }
-    return null;
-  })
-  .filter(Boolean);
+  }
+}).filter(Boolean);
+
+// 이름 목록
+const names = [...new Set(data.flatMap(d=>[d.from,d.to]))];
 
 const input = document.getElementById("search");
+const auto = document.getElementById("auto");
 const result = document.getElementById("result");
 const empty = document.getElementById("empty");
+const rankBox = document.getElementById("rank");
 
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter") search();
+// 자동완성
+input.addEventListener("input", ()=>{
+  auto.innerHTML="";
+  if (!input.value) return auto.style.display="none";
+
+  names.filter(n=>n.includes(input.value)).slice(0,8).forEach(n=>{
+    const d=document.createElement("div");
+    d.textContent=n;
+    d.onclick=()=>{ input.value=n; auto.style.display="none"; search(); };
+    auto.appendChild(d);
+  });
+  auto.style.display="block";
 });
 
-function search() {
-  const name = input.value.trim();
-  result.innerHTML = "";
-  empty.textContent = "";
+input.addEventListener("keydown", e=>{
+  if (e.key==="Enter") search();
+});
 
-  if (!name) return;
+function search(){
+  auto.style.display="none";
+  result.innerHTML="";
+  empty.textContent="";
+  const name=input.value.trim();
+  if(!name) return;
 
-  const filtered = data.filter(r =>
-    r.from.includes(name) || r.to.includes(name)
-  );
+  const filtered=[...new Map(
+    data.filter(d=>d.from.includes(name)||d.to.includes(name))
+        .map(d=>[`${d.from}${d.type}${d.to}`,d])
+  ).values()];
 
-  if (filtered.length === 0) {
-    empty.textContent = "결과가 없습니다 😢";
-    return;
-  }
+  if(!filtered.length){ empty.textContent="결과 없음 😢"; return; }
 
-  filtered.forEach(r => {
-    const li = document.createElement("li");
-    li.className = r.type;
-    li.textContent = `${r.from} ${icons[r.type]} ${r.to}`;
+  filtered.forEach(d=>{
+    const li=document.createElement("li");
+    li.className=d.type;
+    li.innerHTML=`<b>${d.from}</b> ${icons[d.type]} <b>${d.to}</b>`;
+    li.onclick=()=>{ input.value=d.from; search(); };
     result.appendChild(li);
   });
+
+  ranking();
+}
+
+// 인기 랭킹
+function ranking(){
+  const count={};
+  data.forEach(d=>{
+    count[d.from]=(count[d.from]||0)+1;
+    count[d.to]=(count[d.to]||0)+1;
+  });
+  const top=Object.entries(count).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  rankBox.innerHTML="🔥 인기 TOP 5<br>"+top.map(
+    (v,i)=>`${i+1}. ${v[0]} (${v[1]})`
+  ).join("<br>");
 }
 </script>
 </body>
