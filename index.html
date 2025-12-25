@@ -7,7 +7,7 @@
 <style>
 body{
   margin:0;
-  font-family:system-ui, -apple-system, BlinkMacSystemFont;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont;
   background:linear-gradient(135deg,#eaf1ff,#ffffff);
   color:#222;
 }
@@ -33,14 +33,33 @@ h1{margin:0;font-size:2.3rem}
   box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
-input{
-  width:100%;
-  padding:16px;
+.search-box{
+  display:flex;
+  gap:10px;
+}
+.search-box input{
+  flex:1;
+  padding:14px;
   font-size:1.1rem;
   border-radius:12px;
   border:1px solid #ccc;
 }
+.search-box button{
+  padding:14px 18px;
+  font-size:1rem;
+  border-radius:12px;
+  border:none;
+  background:#4f7cff;
+  color:#fff;
+  cursor:pointer;
+}
+.search-box button:hover{opacity:.9}
 
+#suggestions{
+  background:#fff;
+  border-radius:10px;
+  margin-top:6px;
+}
 #suggestions div{
   padding:8px;
   cursor:pointer;
@@ -49,6 +68,8 @@ input{
 
 ul{padding-left:20px}
 li{margin:6px 0}
+
+.hidden{display:none}
 
 footer{
   text-align:center;
@@ -61,33 +82,33 @@ footer{
 <body>
 
 <header>
-  <h1>💙 관계 검색💙</h1>
+  <h1>💙 관계 검색 💙</h1>
   <p>이름으로 관계 검색</p>
 </header>
 
 <div class="container">
 
-  <!-- 검색 -->
-<div class="search-box">
-  <input id="search" type="text" placeholder="이름 검색" />
-  <button id="searchBtn">검색</button>
-</div>
+  <!-- 메인 -->
+  <div class="card">
+    <div class="search-box">
+      <input id="search" placeholder="이름 검색 (2글자 이상)">
+      <button id="searchBtn">검색</button>
+    </div>
 
-<div id="suggestions"></div>
-
-<p id="noResult" class="hidden">🔍 검색 결과가 없습니다.</p>
+    <div id="suggestions"></div>
+    <p id="noResult" class="hidden">🔍 검색 결과가 없습니다.</p>
 
     <h3>🔎 검색 결과</h3>
     <ul id="result"></ul>
 
-<h3>📖 기호 설명</h3>
-<ul>
-  <li>❤️ : 현재 연애</li>
-  <li>💔 : 과거 연애</li>
-  <li>🔁 : 서로 짝사랑</li>
-  <li>➡️ : 짝사랑</li>
-</ul>
-
+    <h3>📖 기호 설명</h3>
+    <ul>
+      <li>❤️ 현재 연애</li>
+      <li>💔 과거 연애</li>
+      <li>🔁 서로 짝사랑</li>
+      <li>➡️ 짝사랑</li>
+    </ul>
+  </div>
 
   <!-- 사이드 -->
   <div>
@@ -102,10 +123,10 @@ footer{
 
       <h3>💔 과거 연애</h3>
       <ul id="breakup"></ul>
-    
+
       <h3>➡️ 짝사랑</h3>
       <ul id="crush"></ul>
-      
+
       <h3>🔁 서로 짝사랑</h3>
       <ul id="mutual"></ul>
     </div>
@@ -114,7 +135,7 @@ footer{
 </div>
 
 <footer>
-  버전 v2.1.6 · 업데이트 2025.12.25
+  버전 v2.2.0 · 업데이트 2025.12.25
 </footer>
 
 <script>
@@ -161,7 +182,6 @@ const relations = [
   {from:"강명구",to:"문효진",type:"breakup"},
   {from:"방훈테",to:"임유리",type:"breakup"},
   {from:"박경담",to:"조연아",type:"crush"},
-  {from:"조하영",to:"유??",type:"crush"},
   {from:"김도원",to:"심채원",type:"crush"},
   {from:"이지우",to:"안진우",type:"dating"},
   {from:"이믿음",to:"신아린",type:"crush"},
@@ -170,71 +190,84 @@ const relations = [
 ];
 
 /* =========================
-   기본 변수
+   변수
 ========================= */
-const search=document.getElementById("search");
-const result=document.getElementById("result");
-const suggestions=document.getElementById("suggestions");
-const dating=document.getElementById("dating");
-const breakup=document.getElementById("breakup");
-const mutual=document.getElementById("mutual");
-const rankEl=document.getElementById("rank");
+const search = document.getElementById("search");
+const searchBtn = document.getElementById("searchBtn");
+const suggestions = document.getElementById("suggestions");
+const result = document.getElementById("result");
+const noResult = document.getElementById("noResult");
+
+const dating = document.getElementById("dating");
+const breakup = document.getElementById("breakup");
+const crush = document.getElementById("crush");
+const mutual = document.getElementById("mutual");
+const rankEl = document.getElementById("rank");
 
 const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
-// 🔤 자동완성 (검색 실행 ❌)
-search.addEventListener("input", ()=>{
-  const q = search.value.trim();
-  suggestions.innerHTML = "";
 
-  if(q.length < 2) return;
+/* =========================
+   자동완성
+========================= */
+search.addEventListener("input",()=>{
+  const q=search.value.trim();
+  suggestions.innerHTML="";
+  if(q.length<2) return;
 
-  names
-    .filter(n => n.includes(q))
-    .forEach(n => {
-      const d = document.createElement("div");
-      d.textContent = n;
-      d.onclick = () => {
-        search.value = n;
-        suggestions.innerHTML = "";
-      };
-      suggestions.appendChild(d);
-    });
+  names.filter(n=>n.includes(q)).forEach(n=>{
+    const d=document.createElement("div");
+    d.textContent=n;
+    d.onclick=()=>{
+      search.value=n;
+      suggestions.innerHTML="";
+      searchRelations();
+    };
+    suggestions.appendChild(d);
+  });
 });
+
+/* =========================
+   검색 실행
+========================= */
 function searchRelations(){
-  const q = search.value.trim();
+  const q=search.value.trim();
   result.innerHTML="";
   dating.innerHTML="";
   breakup.innerHTML="";
-  mutual.innerHTML="";
   crush.innerHTML="";
+  mutual.innerHTML="";
+  noResult.classList.add("hidden");
 
-  if(q.length < 2) return;
+  if(q.length<2) return;
 
-  relations
-    .filter(r => r.from===q || r.to===q)
-    .forEach(r=>{
-      const icon =
-        r.type==="dating" ? "❤️" :
-        r.type==="breakup" ? "💔" :
-        r.type==="mutual" ? "🔁" : "➡️";
+  const found=relations.filter(r=>r.from===q||r.to===q);
 
-      const li=document.createElement("li");
-      li.textContent=`${r.from} ${icon} ${r.to}`;
-      result.appendChild(li);
-
-      if(r.type==="dating") dating.appendChild(li.cloneNode(true));
-      if(r.type==="breakup") breakup.appendChild(li.cloneNode(true));
-      if(r.type==="mutual") mutual.appendChild(li.cloneNode(true));
-      if(r.type==="crush") crush.appendChild(li.cloneNode(true));
-    });
-}
-search.addEventListener("keydown", e=>{
-  if(e.key==="Enter"){
-    suggestions.innerHTML="";
-    searchRelations();
+  if(found.length===0){
+    noResult.classList.remove("hidden");
+    return;
   }
-});
 
+  found.forEach(r=>{
+    const icon =
+      r.type==="dating" ? "❤️" :
+      r.type==="breakup" ? "💔" :
+      r.type==="mutual" ? "🔁" : "➡️";
+
+    const li=document.createElement("li");
+    li.textContent=`${r.from} ${icon} ${r.to}`;
+    result.appendChild(li);
+
+    if(r.type==="dating") dating.appendChild(li.cloneNode(true));
+    if(r.type==="breakup") breakup.appendChild(li.cloneNode(true));
+    if(r.type==="crush") crush.appendChild(li.cloneNode(true));
+    if(r.type==="mutual") mutual.appendChild(li.cloneNode(true));
+  });
+}
+
+searchBtn.onclick=searchRelations;
+search.addEventListener("keydown",e=>{
+  if(e.key==="Enter") searchRelations();
+});
 
 /* =========================
    인기순위
@@ -252,23 +285,8 @@ function rank(){
     .map(e=>`<li>${e[0]} (${e[1]})</li>`)
     .join("");
 }
-
 rank();
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
