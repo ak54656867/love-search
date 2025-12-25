@@ -2,223 +2,291 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Love Search</title>
+<title>관계 검색소</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
   margin: 0;
-  font-family: 'Pretendard', Arial, sans-serif;
-  background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+  font-family: Pretendard, Arial, sans-serif;
+  background: linear-gradient(135deg, #f8fbff, #dbeafe);
   min-height: 100vh;
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: auto;
   padding: 30px;
 }
 
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 h1 {
-  text-align: center;
-  color: #fff;
+  color: #1e3a8a;
+}
+
+.admin-btn {
+  cursor: pointer;
+  font-size: 22px;
 }
 
 .search-box {
   display: flex;
-  justify-content: center;
-  margin: 25px 0;
+  gap: 10px;
+  margin: 30px 0;
 }
 
 input {
-  width: 80%;
-  padding: 20px;
+  flex: 1;
+  padding: 18px;
   font-size: 18px;
-  border-radius: 35px;
-  border: none;
-  outline: none;
+  border-radius: 14px;
+  border: 1px solid #c7d2fe;
 }
 
 button {
-  margin-left: 10px;
-  padding: 20px 28px;
-  border-radius: 35px;
+  padding: 18px 26px;
+  border-radius: 14px;
   border: none;
-  cursor: pointer;
-  font-size: 16px;
-  background: #ff5f7e;
+  background: #2563eb;
   color: white;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
 }
 
 .card {
   background: white;
-  border-radius: 22px;
+  border-radius: 18px;
   padding: 20px;
-  margin-top: 20px;
 }
 
 .legend span {
   display: inline-block;
-  margin-right: 15px;
+  margin-right: 12px;
 }
 
-.admin {
+ol li {
+  margin: 6px 0;
+}
+
+.modal {
   position: fixed;
-  top: 15px;
-  right: 15px;
-  cursor: pointer;
-  font-size: 22px;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  width: 320px;
+}
+
+.modal-content input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+small {
+  color: #555;
 }
 </style>
 </head>
 
 <body>
-<div class="admin" onclick="openAdmin()">⚙</div>
 
-<div class="container">
-  <h1>💖 Love Search</h1>
-
-  <div class="search-box">
-    <input id="search" placeholder="이름 입력 (엔터 가능)" list="names">
-    <button onclick="search()">검색</button>
-  </div>
-
-  <datalist id="names"></datalist>
-
-  <div class="card legend">
-    <b>기호 설명</b><br><br>
-    <span>-> 짝사랑</span>
-    <span>♡ 쌍방 호감</span>
-    <span>|♡| 서로 좋아함 / 깨진 관계</span>
-    <span><-> 커플</span>
-  </div>
-
-  <div id="result" class="card"></div>
-
-  <div class="card">
-    <h3>🔥 인기 순위 (받은 인기 기준)</h3>
-    <ol id="rank"></ol>
-  </div>
-
-  <div class="card">
-    <b>버전</b> v1.1.0<br>
-    <small>
-      - 인기순위 계산 방식 개편<br>
-      - 짝사랑 당함만 점수 반영<br>
-      - 사귐 / 깨짐은 양쪽 1점
-    </small>
+<div class="modal" id="adminModal">
+  <div class="modal-content">
+    <h3>🛠 관리자 로그인</h3>
+    <input id="adminId" placeholder="아이디">
+    <input id="adminPw" type="password" placeholder="비밀번호">
+    <button onclick="adminLogin()">로그인</button>
   </div>
 </div>
 
+<div class="modal" id="editModal">
+  <div class="modal-content">
+    <h3>➕ 관계 추가</h3>
+    <input id="from" placeholder="이름">
+    <input id="type" placeholder="기호 (→ ♡ |♡| ↔)">
+    <input id="to" placeholder="대상">
+    <button onclick="addRelation()">추가</button>
+  </div>
+</div>
+
+<div class="container">
+<header>
+  <h1>💙 관계 검색소</h1>
+  <div class="admin-btn" onclick="openAdmin()">⚙️</div>
+</header>
+
+<div class="search-box">
+  <input id="search" placeholder="이름 입력 (최소 1글자)">
+  <button onclick="search()">검색</button>
+</div>
+
+<div class="grid">
+  <div>
+    <div class="card legend">
+      <b>📘 기호 설명</b><br><br>
+      <span>➡️ 짝사랑</span>
+      <span>💞 쌍방 호감</span>
+      <span>💖 사귀거나 사겼던 사이</span>
+      <span>💍 커플</span>
+    </div>
+
+    <div id="result" class="card">검색 결과가 여기에 표시됩니다</div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h3>🔥 인기 순위 TOP 10</h3>
+      <ol id="rank"></ol>
+    </div>
+
+    <div class="card">
+      <b>버전</b> v2.0.0<br><br>
+      <small>
+        • UI 전면 개편<br>
+        • 인기순위 계산 로직 변경<br>
+        • 관리자 편집 모드 추가<br>
+        • 자동완성 최소 입력 제한
+      </small>
+    </div>
+  </div>
+</div>
+</div>
+
 <script>
+const ADMIN_ID = "ak5465";
+const ADMIN_PW = "shangusdnswl@A1";
+
 let relations = [
- {from:"조민준",to:"문효진",type:"|♡|"},
- {from:"강명구",to:"황혜빈",type:"♡"},
- {from:"양제현",to:"조연아",type:"|♡|"},
- {from:"민정호",to:"이수현",type:"->"},
- {from:"최시훈",to:"유동우",type:"<->"},
- {from:"최시훈",to:"전준형",type:"♡"},
- {from:"안진우",to:"최하린",type:"♡"},
- {from:"김도엽",to:"최하린",type:"->"},
- {from:"손지호",to:"민효주",type:"|♡|"},
- {from:"이믿음",to:"이가율",type:"|♡|"},
- {from:"민정호",to:"조연아",type:"->"},
- {from:"조하영",to:"이믿음",type:"->"},
- {from:"김동윤",to:"류지우",type:"->"},
- {from:"김동윤",to:"손예원",type:"->"},
- {from:"정은우",to:"심채원",type:"->"},
- {from:"박성제",to:"최하린",type:"->"},
- {from:"장건우",to:"신아린",type:"->"},
- {from:"박다온",to:"정연재",type:"|♡|"},
- {from:"권희현",to:"박다온",type:"|♡|"},
- {from:"김동윤",to:"황하림",type:"->"},
- {from:"방훈테",to:"류지우",type:"->"},
- {from:"민효주",to:"전준형",type:"->"},
- {from:"민효주",to:"양제현",type:"->"},
- {from:"민효주",to:"장건우",type:"->"},
- {from:"민효주",to:"김도엽",type:"->"},
- {from:"이서윤",to:"전준형",type:"->"},
- {from:"류지우",to:"김정훈",type:"->"},
- {from:"이서윤",to:"정유준",type:"->"},
- {from:"문효진",to:"전준형",type:"->"},
- {from:"허동하",to:"손예원",type:"->"},
- {from:"김준우",to:"최하린",type:"->"},
- {from:"김가영",to:"노무현",type:"->"},
- {from:"허동하",to:"이수현",type:"->"},
- {from:"허동하",to:"김규리",type:"->"},
- {from:"김동건",to:"김재희",type:"->"},
- {from:"허동하",to:"최하린",type:"->"},
- {from:"강명구",to:"문효진",type:"|♡|"},
- {from:"방훈테",to:"임유리",type:"|♡|"},
- {from:"박경담",to:"조연아",type:"->"},
- {from:"김도원",to:"심채원",type:"->"},
- {from:"이지우",to:"안진우",type:"♡"},
- {from:"이믿음",to:"신아린",type:"->"},
- {from:"유동우",to:"조하영",type:"->"},
- {from:"김민서",to:"이예나",type:"->"}
+ {from:"조민준",to:"문효진",type:"💖"},
+ {from:"강명구",to:"황혜빈",type:"💞"},
+ {from:"양제현",to:"조연아",type:"💖"},
+ {from:"민정호",to:"이수현",type:"➡️"},
+ {from:"최시훈",to:"유동우",type:"💍"},
+ {from:"최시훈",to:"전준형",type:"💞"},
+ {from:"안진우",to:"최하린",type:"💞"},
+ {from:"김도엽",to:"최하린",type:"➡️"},
+ {from:"손지호",to:"민효주",type:"💖"},
+ {from:"이믿음",to:"이가율",type:"💖"},
+ {from:"민정호",to:"조연아",type:"➡️"},
+ {from:"조하영",to:"이믿음",type:"➡️"},
+ {from:"김동윤",to:"류지우",type:"➡️"},
+ {from:"김동윤",to:"손예원",type:"➡️"},
+ {from:"정은우",to:"심채원",type:"➡️"},
+ {from:"박성제",to:"최하린",type:"➡️"},
+ {from:"장건우",to:"신아린",type:"➡️"},
+ {from:"박다온",to:"정연재",type:"💖"},
+ {from:"권희현",to:"박다온",type:"💖"},
+ {from:"김동윤",to:"황하림",type:"➡️"},
+ {from:"방훈테",to:"류지우",type:"➡️"},
+ {from:"민효주",to:"전준형",type:"➡️"},
+ {from:"민효주",to:"양제현",type:"➡️"},
+ {from:"민효주",to:"장건우",type:"➡️"},
+ {from:"민효주",to:"김도엽",type:"➡️"},
+ {from:"이서윤",to:"전준형",type:"➡️"},
+ {from:"류지우",to:"김정훈",type:"➡️"},
+ {from:"이서윤",to:"정유준",type:"➡️"},
+ {from:"문효진",to:"전준형",type:"➡️"},
+ {from:"허동하",to:"손예원",type:"➡️"},
+ {from:"김준우",to:"최하린",type:"➡️"},
+ {from:"김가영",to:"노무현",type:"➡️"},
+ {from:"허동하",to:"이수현",type:"➡️"},
+ {from:"허동하",to:"김규리",type:"➡️"},
+ {from:"허동하",to:"손예원",type:"➡️"},
+ {from:"김동건",to:"김재희",type:"➡️"},
+ {from:"허동하",to:"최하린",type:"➡️"},
+ {from:"강명구",to:"문효진",type:"💖"},
+ {from:"방훈테",to:"임유리",type:"💖"},
+ {from:"박경담",to:"조연아",type:"➡️"},
+ {from:"조하영",to:"유??",type:"➡️"},
+ {from:"김도원",to:"심채원",type:"➡️"},
+ {from:"이지우",to:"안진우",type:"💞"},
+ {from:"이믿음",to:"신아린",type:"➡️"},
+ {from:"유동우",to:"조하영",type:"➡️"},
+ {from:"김민서",to:"이예나",type:"➡️"}
 ];
 
-function buildNames() {
- const set = new Set();
- relations.forEach(r=>{set.add(r.from);set.add(r.to);});
- document.getElementById("names").innerHTML =
-  [...set].map(n=>`<option value="${n}">`).join("");
-}
-
 function search() {
- const name = document.getElementById("search").value.trim();
+ const name = searchInput.value.trim();
+ if(name.length < 1) return;
+
  let html = "";
  const 받은 = relations.filter(r=>r.to===name);
  const 한 = relations.filter(r=>r.from===name);
 
  if(받은.length){
-  html+="<b>❤️ 받은 관계</b><br>";
+  html += "<b>❤️ 받은 관계</b><br>";
   받은.forEach(r=>html+=`${r.from} ${r.type}<br>`);
  }
  if(한.length){
-  html+="<br><b>💌 내가 좋아한</b><br>";
+  html += "<br><b>💌 내가 한</b><br>";
   한.forEach(r=>html+=`${r.to} ${r.type}<br>`);
  }
- if(!html) html="결과 없음";
- document.getElementById("result").innerHTML=html;
+ document.getElementById("result").innerHTML = html || "결과 없음";
 }
 
 function rank() {
  const score = {};
-
  relations.forEach(r=>{
-  if(r.type==="->"){
+  if(r.type==="➡️"){
     score[r.to]=(score[r.to]||0)+1;
   } else {
     score[r.from]=(score[r.from]||0)+1;
     score[r.to]=(score[r.to]||0)+1;
   }
  });
-
  document.getElementById("rank").innerHTML =
   Object.entries(score)
    .sort((a,b)=>b[1]-a[1])
-   .map(e=>`<li>${e[0]} (${e[1]})</li>`)
-   .join("");
+   .slice(0,10)
+   .map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
 }
 
 function openAdmin(){
- const pw=prompt("관리자 비밀번호");
- if(pw==="admin123"){
-  const text=prompt("형식: 이름 기호 이름");
-  if(!text)return;
-  const [a,b,c]=text.split(" ");
-  relations.push({from:a,to:c,type:b});
-  buildNames();rank();
-  alert("추가 완료");
- }
+ document.getElementById("adminModal").style.display="flex";
 }
 
-document.getElementById("search")
- .addEventListener("keydown",e=>{if(e.key==="Enter")search();});
+function adminLogin(){
+ const id=document.getElementById("adminId").value;
+ const pw=document.getElementById("adminPw").value;
+ if(id===ADMIN_ID && pw===ADMIN_PW){
+  document.getElementById("adminModal").style.display="none";
+  document.getElementById("editModal").style.display="flex";
+ } else alert("로그인 실패");
+}
 
-buildNames();
+function addRelation(){
+ relations.push({
+  from:from.value,
+  to:to.value,
+  type:type.value
+ });
+ document.getElementById("editModal").style.display="none";
+ rank();
+ alert("추가 완료");
+}
+
+const searchInput=document.getElementById("search");
+searchInput.addEventListener("keydown",e=>{if(e.key==="Enter")search();});
+
 rank();
 </script>
+
 </body>
 </html>
