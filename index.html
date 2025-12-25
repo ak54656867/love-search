@@ -22,28 +22,27 @@ body {
 h1 {
   text-align: center;
   color: #fff;
-  margin-bottom: 10px;
 }
 
 .search-box {
   display: flex;
   justify-content: center;
-  margin: 20px 0;
+  margin: 25px 0;
 }
 
 input {
   width: 80%;
-  padding: 18px;
+  padding: 20px;
   font-size: 18px;
-  border-radius: 30px;
+  border-radius: 35px;
   border: none;
   outline: none;
 }
 
 button {
   margin-left: 10px;
-  padding: 18px 25px;
-  border-radius: 30px;
+  padding: 20px 28px;
+  border-radius: 35px;
   border: none;
   cursor: pointer;
   font-size: 16px;
@@ -53,7 +52,7 @@ button {
 
 .card {
   background: white;
-  border-radius: 20px;
+  border-radius: 22px;
   padding: 20px;
   margin-top: 20px;
 }
@@ -63,25 +62,12 @@ button {
   margin-right: 15px;
 }
 
-.rank li {
-  margin: 5px 0;
-}
-
 .admin {
   position: fixed;
   top: 15px;
   right: 15px;
   cursor: pointer;
   font-size: 22px;
-}
-
-textarea {
-  width: 100%;
-  height: 120px;
-}
-
-small {
-  color: #666;
 }
 </style>
 </head>
@@ -103,31 +89,28 @@ small {
     <b>기호 설명</b><br><br>
     <span>-> 짝사랑</span>
     <span>♡ 쌍방 호감</span>
-    <span>|♡| 서로 좋아함</span>
+    <span>|♡| 서로 좋아함 / 깨진 관계</span>
     <span><-> 커플</span>
   </div>
 
   <div id="result" class="card"></div>
 
   <div class="card">
-    <h3>🔥 인기 순위 (받은 호감 기준)</h3>
-    <ol id="rank" class="rank"></ol>
+    <h3>🔥 인기 순위 (받은 인기 기준)</h3>
+    <ol id="rank"></ol>
   </div>
 
   <div class="card">
-    <b>버전</b> v1.0.0<br>
+    <b>버전</b> v1.1.0<br>
     <small>
-      - 전체 관계 데이터 반영<br>
-      - 자동완성 / 엔터 검색<br>
-      - 인기순위 시스템<br>
-      - 관리자 편집 모드
+      - 인기순위 계산 방식 개편<br>
+      - 짝사랑 당함만 점수 반영<br>
+      - 사귐 / 깨짐은 양쪽 1점
     </small>
   </div>
 </div>
 
 <script>
-const scoreMap = {"->":1,"♡":2,"|♡|":3,"<->":4};
-
 let relations = [
  {from:"조민준",to:"문효진",type:"|♡|"},
  {from:"강명구",to:"황혜빈",type:"♡"},
@@ -183,7 +166,7 @@ function buildNames() {
 }
 
 function search() {
- const name = searchInput.value.trim();
+ const name = document.getElementById("search").value.trim();
  let html = "";
  const 받은 = relations.filter(r=>r.to===name);
  const 한 = relations.filter(r=>r.from===name);
@@ -197,35 +180,42 @@ function search() {
   한.forEach(r=>html+=`${r.to} ${r.type}<br>`);
  }
  if(!html) html="결과 없음";
- result.innerHTML=html;
+ document.getElementById("result").innerHTML=html;
 }
 
 function rank() {
- const scores = {};
+ const score = {};
+
  relations.forEach(r=>{
-  scores[r.to]=(scores[r.to]||0)+scoreMap[r.type];
+  if(r.type==="->"){
+    score[r.to]=(score[r.to]||0)+1;
+  } else {
+    score[r.from]=(score[r.from]||0)+1;
+    score[r.to]=(score[r.to]||0)+1;
+  }
  });
+
  document.getElementById("rank").innerHTML =
-  Object.entries(scores)
+  Object.entries(score)
    .sort((a,b)=>b[1]-a[1])
-   .slice(0,10)
-   .map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
+   .map(e=>`<li>${e[0]} (${e[1]})</li>`)
+   .join("");
 }
 
 function openAdmin(){
  const pw=prompt("관리자 비밀번호");
  if(pw==="admin123"){
-  const text=prompt("형식: 이름 기호 이름 (예: 김철수 -> 이영희)");
+  const text=prompt("형식: 이름 기호 이름");
   if(!text)return;
   const [a,b,c]=text.split(" ");
   relations.push({from:a,to:c,type:b});
   buildNames();rank();
-  alert("추가됨 (새로고침 안 해도 적용)");
+  alert("추가 완료");
  }
 }
 
-const searchInput=document.getElementById("search");
-searchInput.addEventListener("keydown",e=>{if(e.key==="Enter")search();});
+document.getElementById("search")
+ .addEventListener("keydown",e=>{if(e.key==="Enter")search();});
 
 buildNames();
 rank();
