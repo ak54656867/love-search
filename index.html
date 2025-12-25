@@ -68,9 +68,14 @@ footer{
 <div class="container">
 
   <!-- 검색 -->
-  <div class="card">
-    <input id="search" placeholder="이름 입력 (2글자 이상)">
-    <div id="suggestions"></div>
+<div class="search-box">
+  <input id="search" type="text" placeholder="이름 검색" />
+  <button id="searchBtn">검색</button>
+</div>
+
+<div id="suggestions"></div>
+
+<p id="noResult" class="hidden">🔍 검색 결과가 없습니다.</p>
 
     <h3>🔎 검색 결과</h3>
     <ul id="result"></ul>
@@ -109,7 +114,7 @@ footer{
 </div>
 
 <footer>
-  버전 v2.1.5 · 업데이트 2025.12.25
+  버전 v2.1.6 · 업데이트 2025.12.25
 </footer>
 
 <script>
@@ -253,6 +258,7 @@ rank();
 
 </body>
 </html>
+
 
 
 
