@@ -2,289 +2,241 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>관계 검색소</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>러브 서치</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Pretendard, Arial, sans-serif;
-  background: linear-gradient(135deg, #f8fbff, #dbeafe);
-  min-height: 100vh;
+body{
+  margin:0;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont;
+  background:linear-gradient(135deg,#eaf1ff,#ffffff);
+  color:#222;
 }
-
-.container {
-  max-width: 1000px;
-  margin: auto;
-  padding: 30px;
+header{
+  text-align:center;
+  padding:30px 10px;
 }
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+h1{margin:0;font-size:2.3rem}
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
 }
-
-h1 {
-  color: #1e3a8a;
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
-
-.admin-btn {
-  cursor: pointer;
-  font-size: 22px;
+input{
+  width:100%;
+  padding:16px;
+  font-size:1.1rem;
+  border-radius:12px;
+  border:1px solid #ccc;
 }
-
-.search-box {
-  display: flex;
-  gap: 10px;
-  margin: 30px 0;
+ul{padding-left:20px}
+li{margin:6px 0}
+#suggestions div{
+  padding:8px;
+  cursor:pointer;
 }
-
-input {
-  flex: 1;
-  padding: 18px;
-  font-size: 18px;
-  border-radius: 14px;
-  border: 1px solid #c7d2fe;
-}
-
-button {
-  padding: 18px 26px;
-  border-radius: 14px;
-  border: none;
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
-}
-
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 20px;
-}
-
-.legend span {
-  display: inline-block;
-  margin-right: 12px;
-}
-
-ol li {
-  margin: 6px 0;
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: none;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 25px;
-  border-radius: 18px;
-  width: 320px;
-}
-
-.modal-content input {
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-small {
-  color: #555;
+#suggestions div:hover{background:#eef}
+footer{
+  text-align:center;
+  padding:20px;
+  opacity:.6;
 }
 </style>
 </head>
 
 <body>
 
-<div class="modal" id="adminModal">
-  <div class="modal-content">
-    <h3>🛠 관리자 로그인</h3>
-    <input id="adminId" placeholder="아이디">
-    <input id="adminPw" type="password" placeholder="비밀번호">
-    <button onclick="adminLogin()">로그인</button>
-  </div>
-</div>
-
-<div class="modal" id="editModal">
-  <div class="modal-content">
-    <h3>➕ 관계 추가</h3>
-    <input id="from" placeholder="이름">
-    <input id="type" placeholder="기호 (→ ♡ |♡| ↔)">
-    <input id="to" placeholder="대상">
-    <button onclick="addRelation()">추가</button>
-  </div>
-</div>
-
-<div class="container">
 <header>
-  <h1>💙 관계 검색소</h1>
-  <div class="admin-btn" onclick="openAdmin()">⚙️</div>
+  <h1>💙 러브 서치</h1>
+  <p>이름으로 관계 검색</p>
 </header>
 
-<div class="search-box">
-  <input id="search" placeholder="이름 입력 (최소 1글자)">
-  <button onclick="search()">검색</button>
+<div class="container">
+
+<!-- 🔍 검색 -->
+<div class="card">
+  <input id="search" placeholder="이름 입력 (2글자 이상)">
+  <div id="suggestions"></div>
+
+  <h3>🔎 검색 결과</h3>
+  <ul id="result"></ul>
+
+  <h3>📖 기호 설명</h3>
+  <ul>
+    <li>♡ : 현재 사귀는 중</li>
+    <li>|♡| : 깨진 연애</li>
+    <li>&lt;-&gt; : 서로 짝사랑</li>
+    <li>-&gt; : 짝사랑</li>
+  </ul>
 </div>
 
-<div class="grid">
-  <div>
-    <div class="card legend">
-      <b>📘 기호 설명</b><br><br>
-      <span>➡️ 짝사랑</span>
-      <span>💞 쌍방 호감</span>
-      <span>💖 사귀거나 사겼던 사이</span>
-      <span>💍 커플</span>
-    </div>
+<!-- 📊 사이드 -->
+<div>
 
-    <div id="result" class="card">검색 결과가 여기에 표시됩니다</div>
+  <div class="card">
+    <h3>🔥 인기순위 TOP 10</h3>
+    <ul id="rank"></ul>
   </div>
 
-  <div>
-    <div class="card">
-      <h3>🔥 인기 순위 TOP 10</h3>
-      <ol id="rank"></ol>
-    </div>
+  <div class="card" style="margin-top:20px">
+    <h3>❤️ 현재 사귀는 중</h3>
+    <ul id="dating"></ul>
 
-    <div class="card">
-      <b>버전</b> v2.0.0<br><br>
-      <small>
-        • UI 전면 개편<br>
-        • 인기순위 계산 로직 변경<br>
-        • 관리자 편집 모드 추가<br>
-        • 자동완성 최소 입력 제한
-      </small>
-    </div>
+    <h3>💔 깨진 연애</h3>
+    <ul id="breakup"></ul>
+
+    <h3>🔁 서로 짝사랑</h3>
+    <ul id="mutual"></ul>
   </div>
+
 </div>
 </div>
+
+<footer>
+  버전 v1.0.0 · 데이터 기준일 2025.12.24
+</footer>
 
 <script>
-const ADMIN_ID = "ak5465";
-const ADMIN_PW = "shangusdnswl@A1";
+/* =========================
+   1️⃣ 관계 데이터
+========================= */
+const relations = [
+  // 현재 연애 ♡
+  {from:"강명구",to:"황혜빈",type:"dating"},
+  {from:"최시훈",to:"전준형",type:"dating"},
+  {from:"안진우",to:"최하린",type:"dating"},
+  {from:"이지우",to:"안진우",type:"dating"},
 
-let relations = [
- {from:"조민준",to:"문효진",type:"💖"},
- {from:"강명구",to:"황혜빈",type:"💞"},
- {from:"양제현",to:"조연아",type:"💖"},
- {from:"민정호",to:"이수현",type:"➡️"},
- {from:"최시훈",to:"유동우",type:"💍"},
- {from:"최시훈",to:"전준형",type:"💞"},
- {from:"안진우",to:"최하린",type:"💞"},
- {from:"김도엽",to:"최하린",type:"➡️"},
- {from:"손지호",to:"민효주",type:"💖"},
- {from:"이믿음",to:"이가율",type:"💖"},
- {from:"민정호",to:"조연아",type:"➡️"},
- {from:"조하영",to:"이믿음",type:"➡️"},
- {from:"김동윤",to:"류지우",type:"➡️"},
- {from:"김동윤",to:"손예원",type:"➡️"},
- {from:"정은우",to:"심채원",type:"➡️"},
- {from:"박성제",to:"최하린",type:"➡️"},
- {from:"장건우",to:"신아린",type:"➡️"},
- {from:"박다온",to:"정연재",type:"💖"},
- {from:"권희현",to:"박다온",type:"💖"},
- {from:"김동윤",to:"황하림",type:"➡️"},
- {from:"방훈테",to:"류지우",type:"➡️"},
- {from:"민효주",to:"전준형",type:"➡️"},
- {from:"민효주",to:"양제현",type:"➡️"},
- {from:"민효주",to:"장건우",type:"➡️"},
- {from:"민효주",to:"김도엽",type:"➡️"},
- {from:"이서윤",to:"전준형",type:"➡️"},
- {from:"류지우",to:"김정훈",type:"➡️"},
- {from:"이서윤",to:"정유준",type:"➡️"},
- {from:"문효진",to:"전준형",type:"➡️"},
- {from:"허동하",to:"손예원",type:"➡️"},
- {from:"김준우",to:"최하린",type:"➡️"},
- {from:"김가영",to:"노무현",type:"➡️"},
- {from:"허동하",to:"이수현",type:"➡️"},
- {from:"허동하",to:"김규리",type:"➡️"},
- {from:"허동하",to:"손예원",type:"➡️"},
- {from:"김동건",to:"김재희",type:"➡️"},
- {from:"허동하",to:"최하린",type:"➡️"},
- {from:"강명구",to:"문효진",type:"💖"},
- {from:"방훈테",to:"임유리",type:"💖"},
- {from:"박경담",to:"조연아",type:"➡️"},
- {from:"조하영",to:"유??",type:"➡️"},
- {from:"김도원",to:"심채원",type:"➡️"},
- {from:"이지우",to:"안진우",type:"💞"},
- {from:"이믿음",to:"신아린",type:"➡️"},
- {from:"유동우",to:"조하영",type:"➡️"},
- {from:"김민서",to:"이예나",type:"➡️"}
+  // 깨진 연애 |♡|
+  {from:"조민준",to:"문효진",type:"breakup"},
+  {from:"양제현",to:"조연아",type:"breakup"},
+  {from:"손지호",to:"민효주",type:"breakup"},
+  {from:"이믿음",to:"이가율",type:"breakup"},
+  {from:"박다온",to:"정연재",type:"breakup"},
+  {from:"권희현",to:"박다온",type:"breakup"},
+  {from:"강명구",to:"문효진",type:"breakup"},
+  {from:"방훈테",to:"임유리",type:"breakup"},
+
+  // 서로 짝사랑 <->
+  {from:"최시훈",to:"유동우",type:"mutual"},
+
+  // 짝사랑 ->
+  {from:"민정호",to:"이수현",type:"crush"},
+  {from:"민정호",to:"조연아",type:"crush"},
+  {from:"김도엽",to:"최하린",type:"crush"},
+  {from:"조하영",to:"이믿음",type:"crush"},
+  {from:"김동윤",to:"류지우",type:"crush"},
+  {from:"김동윤",to:"손예원",type:"crush"},
+  {from:"김동윤",to:"황하림",type:"crush"},
+  {from:"정은우",to:"심채원",type:"crush"},
+  {from:"박성제",to:"최하린",type:"crush"},
+  {from:"장건우",to:"신아린",type:"crush"},
+  {from:"방훈테",to:"류지우",type:"crush"},
+  {from:"민효주",to:"전준형",type:"crush"},
+  {from:"민효주",to:"양제현",type:"crush"},
+  {from:"민효주",to:"장건우",type:"crush"},
+  {from:"민효주",to:"김도엽",type:"crush"},
+  {from:"이서윤",to:"전준형",type:"crush"},
+  {from:"이서윤",to:"정유준",type:"crush"},
+  {from:"류지우",to:"김정훈",type:"crush"},
+  {from:"문효진",to:"전준형",type:"crush"},
+  {from:"허동하",to:"손예원",type:"crush"},
+  {from:"허동하",to:"이수현",type:"crush"},
+  {from:"허동하",to:"김규리",type:"crush"},
+  {from:"허동하",to:"최하린",type:"crush"},
+  {from:"김준우",to:"최하린",type:"crush"},
+  {from:"김가영",to:"노무현",type:"crush"},
+  {from:"김동건",to:"김재희",type:"crush"},
+  {from:"박경담",to:"조연아",type:"crush"},
+  {from:"조하영",to:"유??",type:"crush"},
+  {from:"김도원",to:"심채원",type:"crush"},
+  {from:"이믿음",to:"신아린",type:"crush"},
+  {from:"유동우",to:"조하영",type:"crush"},
+  {from:"김민서",to:"이예나",type:"crush"}
 ];
 
-function search() {
- const name = searchInput.value.trim();
- if(name.length < 1) return;
+/* =========================
+   2️⃣ 기본 변수
+========================= */
+const search=document.getElementById("search");
+const result=document.getElementById("result");
+const suggestions=document.getElementById("suggestions");
+const dating=document.getElementById("dating");
+const breakup=document.getElementById("breakup");
+const mutual=document.getElementById("mutual");
+const rankEl=document.getElementById("rank");
 
- let html = "";
- const 받은 = relations.filter(r=>r.to===name);
- const 한 = relations.filter(r=>r.from===name);
+const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
 
- if(받은.length){
-  html += "<b>❤️ 받은 관계</b><br>";
-  받은.forEach(r=>html+=`${r.from} ${r.type}<br>`);
- }
- if(한.length){
-  html += "<br><b>💌 내가 한</b><br>";
-  한.forEach(r=>html+=`${r.to} ${r.type}<br>`);
- }
- document.getElementById("result").innerHTML = html || "결과 없음";
+/* =========================
+   3️⃣ 검색 + 자동추천
+========================= */
+search.addEventListener("input",()=>{
+  const q=search.value.trim();
+  result.innerHTML="";
+  suggestions.innerHTML="";
+  if(q.length<2) return;
+
+  names.filter(n=>n.includes(q)).forEach(n=>{
+    const d=document.createElement("div");
+    d.textContent=n;
+    d.onclick=()=>{search.value=n;search.dispatchEvent(new Event("input"))};
+    suggestions.appendChild(d);
+  });
+
+  relations.filter(r=>r.from===q||r.to===q).forEach(r=>{
+    const icon =
+      r.type==="dating" ? "♡" :
+      r.type==="breakup" ? "|♡|" :
+      r.type==="mutual" ? "<->" : "->";
+    const li=document.createElement("li");
+    li.textContent=`${r.from} ${icon} ${r.to}`;
+    result.appendChild(li);
+  });
+});
+
+/* =========================
+   4️⃣ 목록 렌더링
+========================= */
+function renderLists(){
+  dating.innerHTML="";
+  breakup.innerHTML="";
+  mutual.innerHTML="";
+  relations.forEach(r=>{
+    const li=document.createElement("li");
+    li.textContent=`${r.from} - ${r.to}`;
+    if(r.type==="dating") dating.appendChild(li);
+    if(r.type==="breakup") breakup.appendChild(li);
+    if(r.type==="mutual") mutual.appendChild(li);
+  });
 }
 
-function rank() {
- const score = {};
- relations.forEach(r=>{
-  if(r.type==="➡️"){
-    score[r.to]=(score[r.to]||0)+1;
-  } else {
-    score[r.from]=(score[r.from]||0)+1;
-    score[r.to]=(score[r.to]||0)+1;
-  }
- });
- document.getElementById("rank").innerHTML =
-  Object.entries(score)
-   .sort((a,b)=>b[1]-a[1])
-   .slice(0,10)
-   .map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
+/* =========================
+   5️⃣ 인기순위
+========================= */
+function rank(){
+  const score={};
+  relations.forEach(r=>{
+    if(r.type==="crush"){
+      score[r.to]=(score[r.to]||0)+1;
+    }
+  });
+  rankEl.innerHTML=Object.entries(score)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,10)
+    .map(e=>`<li>${e[0]} (${e[1]})</li>`)
+    .join("");
 }
 
-function openAdmin(){
- document.getElementById("adminModal").style.display="flex";
-}
-
-function adminLogin(){
- const id=document.getElementById("adminId").value;
- const pw=document.getElementById("adminPw").value;
- if(id===ADMIN_ID && pw===ADMIN_PW){
-  document.getElementById("adminModal").style.display="none";
-  document.getElementById("editModal").style.display="flex";
- } else alert("로그인 실패");
-}
-
-function addRelation(){
- relations.push({
-  from:from.value,
-  to:to.value,
-  type:type.value
- });
- document.getElementById("editModal").style.display="none";
- rank();
- alert("추가 완료");
-}
-
-const searchInput=document.getElementById("search");
-searchInput.addEventListener("keydown",e=>{if(e.key==="Enter")search();});
-
+renderLists();
 rank();
 </script>
 
