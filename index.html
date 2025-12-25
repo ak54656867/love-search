@@ -195,6 +195,40 @@ search.addEventListener("input", ()=>{
       suggestions.appendChild(d);
     });
 });
+function searchRelations(){
+  const q = search.value.trim();
+  result.innerHTML="";
+  dating.innerHTML="";
+  breakup.innerHTML="";
+  mutual.innerHTML="";
+  crush.innerHTML="";
+
+  if(q.length < 2) return;
+
+  relations
+    .filter(r => r.from===q || r.to===q)
+    .forEach(r=>{
+      const icon =
+        r.type==="dating" ? "❤️" :
+        r.type==="breakup" ? "💔" :
+        r.type==="mutual" ? "🔁" : "➡️";
+
+      const li=document.createElement("li");
+      li.textContent=`${r.from} ${icon} ${r.to}`;
+      result.appendChild(li);
+
+      if(r.type==="dating") dating.appendChild(li.cloneNode(true));
+      if(r.type==="breakup") breakup.appendChild(li.cloneNode(true));
+      if(r.type==="mutual") mutual.appendChild(li.cloneNode(true));
+      if(r.type==="crush") crush.appendChild(li.cloneNode(true));
+    });
+}
+search.addEventListener("keydown", e=>{
+  if(e.key==="Enter"){
+    suggestions.innerHTML="";
+    searchRelations();
+  }
+});
 
 /* =========================
    검색
@@ -255,6 +289,7 @@ rank();
 
 </body>
 </html>
+
 
 
 
