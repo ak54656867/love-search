@@ -2,12 +2,12 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>관계 검색</title>
+<title>사랑 관계 검색</title>
 
 <style>
   body {
     font-family: "Pretendard", Arial, sans-serif;
-    background: #f4f6fa;
+    background: linear-gradient(135deg, #eef2ff, #fdf2f8);
     display: flex;
     justify-content: center;
     padding-top: 60px;
@@ -15,15 +15,22 @@
 
   .card {
     background: white;
-    width: 420px;
-    padding: 24px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.1);
+    width: 460px;
+    padding: 26px;
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,.12);
   }
 
   h2 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 6px;
+  }
+
+  .desc {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 18px;
   }
 
   .search-box {
@@ -35,35 +42,36 @@
     flex: 1;
     padding: 12px;
     font-size: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid #ccc;
   }
 
   button {
-    padding: 12px 16px;
+    padding: 12px 18px;
     border: none;
-    border-radius: 10px;
-    background: #4f46e5;
+    border-radius: 12px;
+    background: #6366f1;
     color: white;
     font-weight: bold;
     cursor: pointer;
   }
 
   button:hover {
-    background: #4338ca;
+    background: #4f46e5;
   }
 
   ul {
     list-style: none;
     padding: 0;
-    margin-top: 20px;
+    margin-top: 22px;
   }
 
   li {
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    background: #f1f5f9;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    background: #f8fafc;
+    font-size: 15px;
   }
 
   .dating { border-left: 6px solid #ef4444; }
@@ -73,15 +81,26 @@
 
   .empty {
     text-align: center;
-    color: #666;
+    color: #777;
     margin-top: 20px;
+  }
+
+  .legend {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #555;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
   }
 </style>
 </head>
 
 <body>
 <div class="card">
-  <h2>사람 이름 검색</h2>
+  <h2>💘 사랑 관계 검색</h2>
+  <div class="desc">이름을 입력하면 관련된 모든 관계가 나와요</div>
 
   <div class="search-box">
     <input id="search" placeholder="이름 입력">
@@ -90,15 +109,68 @@
 
   <ul id="result"></ul>
   <div id="empty" class="empty"></div>
+
+  <div class="legend">
+    ❤️ 사귀는 중 &nbsp; 💔 깨짐 &nbsp; 👉 짝사랑 &nbsp; 🔁 서로
+  </div>
 </div>
 
 <script>
-const data = [
-  { from: "강명구", to: "문효진", type: "broken" },
-  { from: "강명구", to: "황혜빈", type: "dating" },
-  { from: "김동윤", to: "류지우", type: "crush" },
-  { from: "최시훈", to: "유동우", type: "mutual" }
-];
+const rawText = `
+조민준 |♡| 문효진
+강명구 ♡ 황혜빈
+양제현 |♡| 조연아
+민정호 -> 이수현
+최시훈 <-> 유동우
+최시훈 ♡ 전준형
+안진우 ♡ 최하린
+김도엽 -> 최하린
+손지호 |♡| 민효주
+이믿음 |♡| 이가율
+민정호 -> 조연아
+조하영 -> 이믿음
+김동윤 -> 류지우
+김동윤 -> 손예원
+정은우 -> 심채원
+박성제 -> 최하린
+장건우 -> 신아린
+박다온 |♡| 정연재
+권희현 |♡| 박다온
+김동윤 -> 황하림
+방훈테 -> 류지우
+민효주 -> 전준형
+민효주 -> 양제현
+민효주 -> 장건우
+민효주 -> 김도엽
+이서윤 -> 전준형
+류지우 -> 김정훈
+이서윤 -> 정유준
+문효진 -> 전준형
+허동하 -> 손예원
+김준우 -> 최하린
+김가영 -> 노무현
+허동하 -> 이수현
+허동하 -> 김규리
+허동하 -> 손예원
+김동건 -> 김재희
+허동하 -> 최하린
+강명구 |♡| 문효진
+방훈테 |♡| 임유리
+박경담 -> 조연아
+조하영 -> 유??
+김도원 -> 심채원
+이지우 ♡ 안진우
+이믿음 -> 신아린
+유동우 -> 조하영
+김민서 -> 이예나
+`;
+
+const typeMap = {
+  "♡": "dating",
+  "|♡|": "broken",
+  "->": "crush",
+  "<->": "mutual"
+};
 
 const icons = {
   dating: "❤️",
@@ -106,6 +178,21 @@ const icons = {
   crush: "👉",
   mutual: "🔁"
 };
+
+const data = rawText
+  .trim()
+  .split("\n")
+  .map(line => {
+    line = line.trim();
+    for (const symbol in typeMap) {
+      if (line.includes(symbol)) {
+        const [from, to] = line.split(symbol).map(s => s.trim());
+        return { from, to, type: typeMap[symbol] };
+      }
+    }
+    return null;
+  })
+  .filter(Boolean);
 
 const input = document.getElementById("search");
 const result = document.getElementById("result");
@@ -127,7 +214,7 @@ function search() {
   );
 
   if (filtered.length === 0) {
-    empty.textContent = "결과가 없습니다";
+    empty.textContent = "결과가 없습니다 😢";
     return;
   }
 
