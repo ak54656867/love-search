@@ -2,239 +2,233 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>사랑 관계 검색</title>
+<title>Love Search</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-  body {
-    font-family: "Pretendard", Arial, sans-serif;
-    background: linear-gradient(135deg, #eef2ff, #fdf2f8);
-    display: flex;
-    justify-content: center;
-    padding-top: 50px;
-  }
+body {
+  margin: 0;
+  font-family: 'Pretendard', Arial, sans-serif;
+  background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+  min-height: 100vh;
+}
 
-  .card {
-    background: white;
-    width: 480px;
-    padding: 26px;
-    border-radius: 18px;
-    box-shadow: 0 20px 40px rgba(0,0,0,.12);
-    position: relative;
-  }
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
+}
 
-  h2 { text-align: center; margin-bottom: 6px; }
-  .desc { text-align: center; font-size: 14px; color: #666; }
+h1 {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 10px;
+}
 
-  .search-box { display: flex; gap: 8px; margin-top: 14px; }
-  input {
-    flex: 1;
-    padding: 12px;
-    font-size: 15px;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-  }
-  button {
-    padding: 12px 18px;
-    border: none;
-    border-radius: 12px;
-    background: #6366f1;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-  }
+.search-box {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
 
-  ul { list-style: none; padding: 0; margin-top: 18px; }
-  li {
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    background: #f8fafc;
-    cursor: pointer;
-  }
+input {
+  width: 80%;
+  padding: 18px;
+  font-size: 18px;
+  border-radius: 30px;
+  border: none;
+  outline: none;
+}
 
-  .dating { border-left: 6px solid #ef4444; }
-  .broken { border-left: 6px solid #94a3b8; }
-  .crush  { border-left: 6px solid #3b82f6; }
-  .mutual { border-left: 6px solid #a855f7; }
+button {
+  margin-left: 10px;
+  padding: 18px 25px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  background: #ff5f7e;
+  color: white;
+}
 
-  .autocomplete {
-    position: absolute;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    width: calc(100% - 52px);
-    top: 118px;
-    left: 26px;
-    z-index: 10;
-    max-height: 160px;
-    overflow-y: auto;
-  }
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: 20px;
+}
 
-  .autocomplete div {
-    padding: 10px;
-    cursor: pointer;
-  }
+.legend span {
+  display: inline-block;
+  margin-right: 15px;
+}
 
-  .autocomplete div:hover {
-    background: #eef2ff;
-  }
+.rank li {
+  margin: 5px 0;
+}
 
-  .rank {
-    margin-top: 20px;
-    font-size: 14px;
-    background: #f1f5f9;
-    padding: 12px;
-    border-radius: 12px;
-  }
+.admin {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 22px;
+}
 
-  .empty { text-align: center; color: #777; margin-top: 14px; }
+textarea {
+  width: 100%;
+  height: 120px;
+}
+
+small {
+  color: #666;
+}
 </style>
 </head>
 
 <body>
-<div class="card">
-  <h2>💘 사랑 관계 검색</h2>
-  <div class="desc">성만 입력해도 자동완성됩니다</div>
+<div class="admin" onclick="openAdmin()">⚙</div>
+
+<div class="container">
+  <h1>💖 Love Search</h1>
 
   <div class="search-box">
-    <input id="search" placeholder="이름 입력">
+    <input id="search" placeholder="이름 입력 (엔터 가능)" list="names">
     <button onclick="search()">검색</button>
   </div>
 
-  <div id="auto" class="autocomplete" style="display:none"></div>
+  <datalist id="names"></datalist>
 
-  <ul id="result"></ul>
-  <div id="empty" class="empty"></div>
+  <div class="card legend">
+    <b>기호 설명</b><br><br>
+    <span>-> 짝사랑</span>
+    <span>♡ 쌍방 호감</span>
+    <span>|♡| 서로 좋아함</span>
+    <span><-> 커플</span>
+  </div>
 
-  <div class="rank" id="rank"></div>
+  <div id="result" class="card"></div>
+
+  <div class="card">
+    <h3>🔥 인기 순위 (받은 호감 기준)</h3>
+    <ol id="rank" class="rank"></ol>
+  </div>
+
+  <div class="card">
+    <b>버전</b> v1.0.0<br>
+    <small>
+      - 전체 관계 데이터 반영<br>
+      - 자동완성 / 엔터 검색<br>
+      - 인기순위 시스템<br>
+      - 관리자 편집 모드
+    </small>
+  </div>
 </div>
 
 <script>
-const rawText = `
-조민준 |♡| 문효진
-강명구 ♡ 황혜빈
-양제현 |♡| 조연아
-민정호 -> 이수현
-최시훈 <-> 유동우
-최시훈 ♡ 전준형
-안진우 ♡ 최하린
-김도엽 -> 최하린
-손지호 |♡| 민효주
-이믿음 |♡| 이가율
-민정호 -> 조연아
-조하영 -> 이믿음
-김동윤 -> 류지우
-김동윤 -> 손예원
-정은우 -> 심채원
-박성제 -> 최하린
-장건우 -> 신아린
-박다온 |♡| 정연재
-권희현 |♡| 박다온
-김동윤 -> 황하림
-방훈테 -> 류지우
-민효주 -> 전준형
-민효주 -> 양제현
-민효주 -> 장건우
-민효주 -> 김도엽
-이서윤 -> 전준형
-류지우 -> 김정훈
-이서윤 -> 정유준
-문효진 -> 전준형
-허동하 -> 손예원
-김준우 -> 최하린
-김가영 -> 노무현
-허동하 -> 이수현
-허동하 -> 김규리
-허동하 -> 손예원
-김동건 -> 김재희
-허동하 -> 최하린
-강명구 |♡| 문효진
-방훈테 |♡| 임유리
-박경담 -> 조연아
-조하영 -> 유??
-김도원 -> 심채원
-이지우 ♡ 안진우
-이믿음 -> 신아린
-유동우 -> 조하영
-김민서 -> 이예나
-`;
+const scoreMap = {"->":1,"♡":2,"|♡|":3,"<->":4};
 
-const typeMap = { "♡":"dating", "|♡|":"broken", "->":"crush", "<->":"mutual" };
-const icons = { dating:"❤️", broken:"💔", crush:"👉", mutual:"🔁" };
+let relations = [
+ {from:"조민준",to:"문효진",type:"|♡|"},
+ {from:"강명구",to:"황혜빈",type:"♡"},
+ {from:"양제현",to:"조연아",type:"|♡|"},
+ {from:"민정호",to:"이수현",type:"->"},
+ {from:"최시훈",to:"유동우",type:"<->"},
+ {from:"최시훈",to:"전준형",type:"♡"},
+ {from:"안진우",to:"최하린",type:"♡"},
+ {from:"김도엽",to:"최하린",type:"->"},
+ {from:"손지호",to:"민효주",type:"|♡|"},
+ {from:"이믿음",to:"이가율",type:"|♡|"},
+ {from:"민정호",to:"조연아",type:"->"},
+ {from:"조하영",to:"이믿음",type:"->"},
+ {from:"김동윤",to:"류지우",type:"->"},
+ {from:"김동윤",to:"손예원",type:"->"},
+ {from:"정은우",to:"심채원",type:"->"},
+ {from:"박성제",to:"최하린",type:"->"},
+ {from:"장건우",to:"신아린",type:"->"},
+ {from:"박다온",to:"정연재",type:"|♡|"},
+ {from:"권희현",to:"박다온",type:"|♡|"},
+ {from:"김동윤",to:"황하림",type:"->"},
+ {from:"방훈테",to:"류지우",type:"->"},
+ {from:"민효주",to:"전준형",type:"->"},
+ {from:"민효주",to:"양제현",type:"->"},
+ {from:"민효주",to:"장건우",type:"->"},
+ {from:"민효주",to:"김도엽",type:"->"},
+ {from:"이서윤",to:"전준형",type:"->"},
+ {from:"류지우",to:"김정훈",type:"->"},
+ {from:"이서윤",to:"정유준",type:"->"},
+ {from:"문효진",to:"전준형",type:"->"},
+ {from:"허동하",to:"손예원",type:"->"},
+ {from:"김준우",to:"최하린",type:"->"},
+ {from:"김가영",to:"노무현",type:"->"},
+ {from:"허동하",to:"이수현",type:"->"},
+ {from:"허동하",to:"김규리",type:"->"},
+ {from:"김동건",to:"김재희",type:"->"},
+ {from:"허동하",to:"최하린",type:"->"},
+ {from:"강명구",to:"문효진",type:"|♡|"},
+ {from:"방훈테",to:"임유리",type:"|♡|"},
+ {from:"박경담",to:"조연아",type:"->"},
+ {from:"김도원",to:"심채원",type:"->"},
+ {from:"이지우",to:"안진우",type:"♡"},
+ {from:"이믿음",to:"신아린",type:"->"},
+ {from:"유동우",to:"조하영",type:"->"},
+ {from:"김민서",to:"이예나",type:"->"}
+];
 
-const data = rawText.trim().split("\n").map(l=>{
-  for (let s in typeMap) {
-    if (l.includes(s)) {
-      const [from,to]=l.split(s).map(x=>x.trim());
-      return {from,to,type:typeMap[s]};
-    }
-  }
-}).filter(Boolean);
-
-// 이름 목록
-const names = [...new Set(data.flatMap(d=>[d.from,d.to]))];
-
-const input = document.getElementById("search");
-const auto = document.getElementById("auto");
-const result = document.getElementById("result");
-const empty = document.getElementById("empty");
-const rankBox = document.getElementById("rank");
-
-// 자동완성
-input.addEventListener("input", ()=>{
-  auto.innerHTML="";
-  if (!input.value) return auto.style.display="none";
-
-  names.filter(n=>n.includes(input.value)).slice(0,8).forEach(n=>{
-    const d=document.createElement("div");
-    d.textContent=n;
-    d.onclick=()=>{ input.value=n; auto.style.display="none"; search(); };
-    auto.appendChild(d);
-  });
-  auto.style.display="block";
-});
-
-input.addEventListener("keydown", e=>{
-  if (e.key==="Enter") search();
-});
-
-function search(){
-  auto.style.display="none";
-  result.innerHTML="";
-  empty.textContent="";
-  const name=input.value.trim();
-  if(!name) return;
-
-  const filtered=[...new Map(
-    data.filter(d=>d.from.includes(name)||d.to.includes(name))
-        .map(d=>[`${d.from}${d.type}${d.to}`,d])
-  ).values()];
-
-  if(!filtered.length){ empty.textContent="결과 없음 😢"; return; }
-
-  filtered.forEach(d=>{
-    const li=document.createElement("li");
-    li.className=d.type;
-    li.innerHTML=`<b>${d.from}</b> ${icons[d.type]} <b>${d.to}</b>`;
-    li.onclick=()=>{ input.value=d.from; search(); };
-    result.appendChild(li);
-  });
-
-  ranking();
+function buildNames() {
+ const set = new Set();
+ relations.forEach(r=>{set.add(r.from);set.add(r.to);});
+ document.getElementById("names").innerHTML =
+  [...set].map(n=>`<option value="${n}">`).join("");
 }
 
-// 인기 랭킹
-function ranking(){
-  const count={};
-  data.forEach(d=>{
-    count[d.from]=(count[d.from]||0)+1;
-    count[d.to]=(count[d.to]||0)+1;
-  });
-  const top=Object.entries(count).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  rankBox.innerHTML="🔥 인기 TOP 5<br>"+top.map(
-    (v,i)=>`${i+1}. ${v[0]} (${v[1]})`
-  ).join("<br>");
+function search() {
+ const name = searchInput.value.trim();
+ let html = "";
+ const 받은 = relations.filter(r=>r.to===name);
+ const 한 = relations.filter(r=>r.from===name);
+
+ if(받은.length){
+  html+="<b>❤️ 받은 관계</b><br>";
+  받은.forEach(r=>html+=`${r.from} ${r.type}<br>`);
+ }
+ if(한.length){
+  html+="<br><b>💌 내가 좋아한</b><br>";
+  한.forEach(r=>html+=`${r.to} ${r.type}<br>`);
+ }
+ if(!html) html="결과 없음";
+ result.innerHTML=html;
 }
+
+function rank() {
+ const scores = {};
+ relations.forEach(r=>{
+  scores[r.to]=(scores[r.to]||0)+scoreMap[r.type];
+ });
+ document.getElementById("rank").innerHTML =
+  Object.entries(scores)
+   .sort((a,b)=>b[1]-a[1])
+   .slice(0,10)
+   .map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
+}
+
+function openAdmin(){
+ const pw=prompt("관리자 비밀번호");
+ if(pw==="admin123"){
+  const text=prompt("형식: 이름 기호 이름 (예: 김철수 -> 이영희)");
+  if(!text)return;
+  const [a,b,c]=text.split(" ");
+  relations.push({from:a,to:c,type:b});
+  buildNames();rank();
+  alert("추가됨 (새로고침 안 해도 적용)");
+ }
+}
+
+const searchInput=document.getElementById("search");
+searchInput.addEventListener("keydown",e=>{if(e.key==="Enter")search();});
+
+buildNames();
+rank();
 </script>
 </body>
 </html>
