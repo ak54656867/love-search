@@ -230,42 +230,6 @@ search.addEventListener("keydown", e=>{
   }
 });
 
-/* =========================
-   검색
-========================= */
-search.addEventListener("input",()=>{
-  const q=search.value.trim();
-  result.innerHTML="";
-  suggestions.innerHTML="";
-  dating.innerHTML="";
-  breakup.innerHTML="";
-  mutual.innerHTML="";
-
-  if(q.length<2) return;
-
-  names.filter(n=>n.includes(q)).forEach(n=>{
-    const d=document.createElement("div");
-    d.textContent=n;
-    d.onclick=()=>{search.value=n;search.dispatchEvent(new Event("input"))};
-    suggestions.appendChild(d);
-  });
-
-  relations.filter(r=>r.from===q||r.to===q).forEach(r=>{
-const icon =
-  r.type==="dating" ? "❤️" :
-  r.type==="breakup" ? "💔" :
-  r.type==="mutual" ? "🔁" : "➡️";
-
-
-    const li=document.createElement("li");
-    li.textContent=`${r.from} ${icon} ${r.to}`;
-    result.appendChild(li);
-
-    if(r.type==="dating") dating.appendChild(li.cloneNode(true));
-    if(r.type==="breakup") breakup.appendChild(li.cloneNode(true));
-    if(r.type==="mutual") mutual.appendChild(li.cloneNode(true));
-  });
-});
 
 /* =========================
    인기순위
@@ -289,6 +253,7 @@ rank();
 
 </body>
 </html>
+
 
 
 
