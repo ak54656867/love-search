@@ -198,10 +198,11 @@ search.addEventListener("input",()=>{
   });
 
   relations.filter(r=>r.from===q||r.to===q).forEach(r=>{
-    const icon =
-      r.type==="dating" ? "♡" :
-      r.type==="breakup" ? "|♡|" :
-      r.type==="mutual" ? "↔" : "→";
+const icon =
+  r.type==="dating" ? "❤️" :
+  r.type==="breakup" ? "💔" :
+  r.type==="mutual" ? "🔁" : "➡️";
+
 
     const li=document.createElement("li");
     li.textContent=`${r.from} ${icon} ${r.to}`;
@@ -235,6 +236,7 @@ rank();
 
 </body>
 </html>
+
 
 
 
