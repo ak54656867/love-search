@@ -8,154 +8,42 @@
 /* =========================
    다크 시크 테마 스타일
 ========================= */
-html, body {
-  height: 100%;
-  margin: 0;
-}
-
+html, body { height: 100%; margin: 0; }
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont;
   color: #f5f5f5;
   min-height: 100vh;
   background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 40%, #f5f5f5 100%);
 }
-
-header {
-  text-align:center;
-  padding:30px 10px;
-}
-
-h1 {
-  margin:0;
-  font-size:2.3rem;
-  color:#ffffff;
-  font-family: 'Verdana', 'Geneva', sans-serif;
-  letter-spacing: 1.5px;
-  font-weight: bold;
-}
-
-.container {
-  max-width:1200px;
-  margin:auto;
-  padding:20px;
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:20px;
-}
-
-.card {
-  background:#1e1e1e;
-  border-radius:16px;
-  padding:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.6);
-  color:#f5f5f5;
-}
-
-.search-box {
-  display:flex;
-  gap:10px;
-}
-
-.search-box input {
-  flex:1;
-  padding:14px;
-  font-size:1.1rem;
-  border-radius:12px;
-  border:1px solid #444;
-  background:#2a2a2a;
-  color:#f5f5f5;
-}
-
-.search-box input::placeholder {
-  color:#aaa;
-}
-
-.search-box button {
-  padding:14px 18px;
-  font-size:1rem;
-  border-radius:12px;
-  border:none;
-  background:#4f7cff;
-  color:#fff;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-.search-box button:hover {
-  opacity:0.85;
-}
-
-#suggestions {
-  background:#2a2a2a;
-  border-radius:10px;
-  margin-top:6px;
-  color:#f5f5f5;
-}
-
-#suggestions div:hover {
-  background:#3b3b3b;
-}
-
-ul {
-  padding-left:20px;
-}
-
-li {
-  margin:6px 0;
-}
-
-.hidden {
-  display:none;
-}
-
-footer {
-  text-align:center;
-  padding:20px;
-  color:#000000;
-  opacity:0.6;
-}
-
-/* =========================
-   업데이트 모달
-========================= */
-.modal {
-  display: block; /* 페이지 로드 시 자동 표시 */
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.7);
-}
-
-.modal-content {
-  background: #1e1e1e;
-  color: #f5f5f5;
-  margin: 15% auto;
-  padding: 20px;
-  border-radius: 12px;
-  width: 80%;
-  max-width: 400px;
-  text-align: center;
-  position: relative;
-}
-
-#closeBtn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  cursor: pointer;
-}
+header { text-align:center; padding:30px 10px; }
+h1 { margin:0; font-size:2.3rem; color:#ffffff; font-family:'Verdana','Geneva',sans-serif; letter-spacing:1.5px; font-weight:bold; }
+.container { max-width:1200px; margin:auto; padding:20px; display:grid; grid-template-columns:2fr 1fr; gap:20px; }
+.card { background:#1e1e1e; border-radius:16px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.6); color:#f5f5f5; }
+.search-box { display:flex; gap:10px; }
+.search-box input { flex:1; padding:14px; font-size:1.1rem; border-radius:12px; border:1px solid #444; background:#2a2a2a; color:#f5f5f5; }
+.search-box input::placeholder { color:#aaa; }
+.search-box button { padding:14px 18px; font-size:1rem; border-radius:12px; border:none; background:#4f7cff; color:#fff; cursor:pointer; transition:0.3s; }
+.search-box button:hover { opacity:0.85; }
+#suggestions { background:#2a2a2a; border-radius:10px; margin-top:6px; color:#f5f5f5; }
+#suggestions div:hover { background:#3b3b3b; }
+ul { padding-left:20px; }
+li { margin:6px 0; }
+.hidden { display:none; }
+footer { text-align:center; padding:20px; color:#000000; opacity:0.6; }
+/* 최근 검색 */
+#recentWrapper { margin-top:10px; background:#2a2a2a; padding:10px; border-radius:12px; }
+#recentList li { cursor:pointer; padding:4px 6px; border-radius:6px; }
+#recentList li:hover { background:#3b3b3b; }
+/* 업데이트 모달 */
+.modal { display: block; position: fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color: rgba(0,0,0,0.7); }
+.modal-content { background:#1e1e1e; color:#f5f5f5; margin:15% auto; padding:20px; border-radius:12px; width:80%; max-width:400px; text-align:center; position:relative; }
+#closeBtn { position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; }
 </style>
 </head>
 
 <body>
 
-<!-- =========================
-     업데이트 로그 모달
-========================= -->
+<!-- 업데이트 로그 모달 -->
 <div id="updateModal" class="modal">
   <div class="modal-content">
     <span id="closeBtn">&times;</span>
@@ -179,6 +67,13 @@ footer {
     </div>
 
     <div id="suggestions"></div>
+
+    <!-- 최근 검색 기록 -->
+    <div id="recentWrapper">
+      <h4>최근 검색</h4>
+      <ul id="recentList"></ul>
+    </div>
+
     <p id="noResult" class="hidden">🔍 검색 결과가 없습니다.</p>
 
     <h3>🔎 검색 결과</h3>
@@ -217,23 +112,18 @@ footer {
 
 </div>
 
-<footer id="footerVersion">
-</footer>
+<footer id="footerVersion"></footer>
 
 <script>
 /* =========================
    업데이트 정보
 ========================= */
 const updateLog = {
-  version: "v3.7.2",
+  version: "v3.8.1",
   date: "2025-12-26",
   content: [
-    "인기 시스템 개선(3.7.0)",
-    "UI/UX 개선(3.7.0)",
-    "업데이트 로그 개선(3.7.0)",
-    "버그 수정(3.7.0)",
-    "데이터 추가(3.7.1)",
-    "검색 기능 개선(3.7.2)"
+    "검색 최근 기록 추가(3.8.1)",
+    "데이터 추가(3.8.1)"
   ]
 };
 
@@ -302,14 +192,32 @@ const searchBtn = document.getElementById("searchBtn");
 const suggestions = document.getElementById("suggestions");
 const result = document.getElementById("result");
 const noResult = document.getElementById("noResult");
-
 const dating = document.getElementById("dating");
 const breakup = document.getElementById("breakup");
 const crush = document.getElementById("crush");
 const mutual = document.getElementById("mutual");
 const rankEl = document.getElementById("rank");
-
+const recentList = document.getElementById("recentList");
 const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
+const MAX_RECENT = 10;
+let recent = JSON.parse(localStorage.getItem("recentSearch") || "[]");
+
+/* =========================
+   최근 검색 렌더링
+========================= */
+function renderRecent() {
+  recentList.innerHTML = "";
+  recent.forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name;
+    li.onclick = () => {
+      search.value = name;
+      searchRelations();
+    };
+    recentList.appendChild(li);
+  });
+}
+renderRecent();
 
 /* =========================
    자동완성
@@ -317,16 +225,11 @@ const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
 search.addEventListener("input",()=>{
   const q=search.value.trim();
   suggestions.innerHTML="";
-  if(q.length < 1) return;
-
+  if(q.length<1) return;
   names.filter(n=>n.includes(q)).forEach(n=>{
     const d=document.createElement("div");
     d.textContent=n;
-    d.onclick=()=>{
-      search.value=n;
-      suggestions.innerHTML="";
-      searchRelations();
-    };
+    d.onclick=()=>{ search.value=n; suggestions.innerHTML=""; searchRelations(); };
     suggestions.appendChild(d);
   });
 });
@@ -334,6 +237,14 @@ search.addEventListener("input",()=>{
 /* =========================
    검색 실행
 ========================= */
+function addRecent(name){
+  recent = recent.filter(n=>n!==name);
+  recent.unshift(name);
+  if(recent.length>MAX_RECENT) recent.pop();
+  localStorage.setItem("recentSearch", JSON.stringify(recent));
+  renderRecent();
+}
+
 function searchRelations(){
   const q=search.value.trim();
   result.innerHTML="";
@@ -342,90 +253,52 @@ function searchRelations(){
   crush.innerHTML="";
   mutual.innerHTML="";
   noResult.classList.add("hidden");
-
   if(q.length<1) return;
-
   const found=relations.filter(r=>r.from===q||r.to===q);
-
-  if(found.length===0){
-    noResult.classList.remove("hidden");
-    return;
-  }
-
+  if(found.length===0){ noResult.classList.remove("hidden"); return; }
+  addRecent(q);
   found.forEach(r=>{
-    const icon =
-      r.type==="dating" ? "❤️" :
-      r.type==="breakup" ? "💔" :
-      r.type==="mutual" ? "🔁" : "➡️";
-
+    const icon = r.type==="dating"?"❤️":r.type==="breakup"?"💔":r.type==="mutual"?"🔁":"➡️";
     const li=document.createElement("li");
     li.textContent=`${r.from} ${icon} ${r.to}`;
     result.appendChild(li);
-
     if(r.type==="dating") dating.appendChild(li.cloneNode(true));
     if(r.type==="breakup") breakup.appendChild(li.cloneNode(true));
     if(r.type==="crush") crush.appendChild(li.cloneNode(true));
     if(r.type==="mutual") mutual.appendChild(li.cloneNode(true));
   });
 }
-
 searchBtn.onclick=searchRelations;
-search.addEventListener("keydown",e=>{
-  if(e.key==="Enter") searchRelations();
-});
+search.addEventListener("keydown",e=>{ if(e.key==="Enter") searchRelations(); });
 
 /* =========================
    인기순위
 ========================= */
 function rank(){
   const score={};
-  
   relations.forEach(r=>{
     switch(r.type){
-      case "crush":
-        score[r.to] = (score[r.to]||0)+1;
-        break;
+      case "crush": score[r.to]=(score[r.to]||0)+1; break;
       case "dating":
-      case "breakup":
-        score[r.from] = (score[r.from]||0)+1;
-        score[r.to] = (score[r.to]||0)+1;
-        break;
-      case "mutual":
-        score[r.from] = (score[r.from]||0)+1;
-        score[r.to] = (score[r.to]||0)+1;
-        break;
+      case "breakup": score[r.from]=(score[r.from]||0)+1; score[r.to]=(score[r.to]||0)+1; break;
+      case "mutual": score[r.from]=(score[r.from]||0)+1; score[r.to]=(score[r.to]||0)+1; break;
     }
   });
-
-  rankEl.innerHTML=Object.entries(score)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0,10)
-    .map(e=>`<li>${e[0]} (${e[1]})</li>`)
-    .join("");
+  rankEl.innerHTML=Object.entries(score).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
 }
 rank();
 
 /* =========================
-   업데이트 모달 적용
+   업데이트 모달
 ========================= */
 const modal = document.getElementById("updateModal");
 const closeBtn = document.getElementById("closeBtn");
-
-// 모달 내용 적용
 document.getElementById("modalVersion").textContent = `업데이트 ${updateLog.version} · ${updateLog.date}`;
 document.getElementById("modalContent").innerHTML = updateLog.content.map(c=>`• ${c}`).join("<br>");
-
-// 바닥글에도 표시
 document.getElementById("footerVersion").textContent = `버전 ${updateLog.version} · 업데이트 ${updateLog.date}`;
-
-// 모달 닫기
-closeBtn.onclick = () => { modal.style.display = "none"; };
-window.onclick = (e) => { if(e.target === modal) modal.style.display = "none"; };
+closeBtn.onclick = () => { modal.style.display="none"; };
+window.onclick = e=>{ if(e.target===modal) modal.style.display="none"; };
 </script>
 
 </body>
 </html>
-
-
-
-
