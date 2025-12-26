@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>🤫 Secret Search v4.2.1 🤫</title>
+<title>🤫 Secret Search v5.1.1 🤫</title>
 
 <style>
 html,body{
@@ -24,9 +24,8 @@ header{
   padding:30px 10px;
 }
 h1{margin:0;font-size:2.3rem;}
-button{
-  cursor:pointer;
-}
+button{cursor:pointer;}
+
 .container{
   max-width:1200px;
   margin:auto;
@@ -78,19 +77,13 @@ body.light .search-box input{
   background:#2a2a2a;
   border-radius:10px;
 }
-body.light #suggestions{
-  background:#fff;
-}
+body.light #suggestions{background:#fff;}
 #suggestions div{
   padding:6px;
   cursor:pointer;
 }
-#suggestions div:hover{
-  background:#3b3b3b;
-}
-body.light #suggestions div:hover{
-  background:#ddd;
-}
+#suggestions div:hover{background:#3b3b3b;}
+body.light #suggestions div:hover{background:#ddd;}
 
 #recentWrapper{
   margin-top:10px;
@@ -98,9 +91,8 @@ body.light #suggestions div:hover{
   border-radius:12px;
   background:#2a2a2a;
 }
-body.light #recentWrapper{
-  background:#e0e0e0;
-}
+body.light #recentWrapper{background:#e0e0e0;}
+
 #recentList li{
   display:flex;
   justify-content:space-between;
@@ -108,12 +100,8 @@ body.light #recentWrapper{
   border-radius:6px;
   cursor:pointer;
 }
-#recentList li:hover{
-  background:#3b3b3b;
-}
-body.light #recentList li:hover{
-  background:#ccc;
-}
+#recentList li:hover{background:#3b3b3b;}
+body.light #recentList li:hover{background:#ccc;}
 
 #noResult{
   display:none;
@@ -122,13 +110,8 @@ body.light #recentList li:hover{
   margin:10px 0;
 }
 
-#legend{
-  margin-top:10px;
-  font-size:.95rem;
-}
-#legend span{
-  margin-right:10px;
-}
+#legend{margin-top:10px;font-size:.95rem;}
+#legend span{margin-right:10px;}
 
 ul{padding-left:20px;}
 li{margin:6px 0;}
@@ -141,6 +124,17 @@ li{margin:6px 0;}
   background:#4f7cff;
   color:#fff;
 }
+
+/* ===== 관계 그래프 ===== */
+.node{
+  padding:10px 14px;
+  border-radius:20px;
+  font-size:.95rem;
+}
+.node.green{background:#2e7d32;}
+.node.orange{background:#ef6c00;}
+.node.red{background:#c62828;}
+.node.gray{background:#555;}
 
 /* 업데이트 모달 */
 #updateModal{
@@ -212,19 +206,30 @@ body.light .modal{
     <ul id="rank"></ul>
   </div>
 
+  <!-- 관계 그래프 카드 -->
+  <div class="card" id="graphCard" style="display:none">
+    <h3>🧠 관계 그래프</h3>
+    <div id="graph" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+    <div style="margin-top:10px;font-size:.9rem">
+      <span style="color:#4caf50">● 초록</span> 내가 좋아함
+      <span style="color:#ff9800;margin-left:10px">● 주황</span> 나를 좋아함
+      <span style="color:#f44336;margin-left:10px">● 빨강</span> 경쟁
+      <span style="color:#aaa;margin-left:10px">● 회색</span> 관계없음
+    </div>
+  </div>
+
 </div>
 
 <!-- 업데이트 -->
 <div id="updateModal">
   <div class="modal">
     <div class="modal-header">
-      <h3>업데이트 v4.2.1 · 2025-12-26</h3>
+      <h3>업데이트 v5.1.1 · 2025-12-26</h3>
       <span id="closeUpdate" style="cursor:pointer">✖</span>
     </div>
     <p>
-      • 검색/최근검색 완전 복구<br>
-      • 관계 표시 로직 안정화<br>
-      • UI 구조 정리
+      • 관계 그래프 시각화 추가<br>
+      • 호감/경쟁 관계 자동 색상 분류
     </p>
   </div>
 </div>
@@ -238,7 +243,7 @@ toggle.onclick=()=>{
 };
 
 /* 데이터 */
-const relations=[
+const relations=[ /* (네가 준 데이터 그대로) */ 
   {from:"조민준",to:"문효진",type:"breakup"},
   {from:"강명구",to:"황혜빈",type:"dating"},
   {from:"조연아",to:"김도엽",type:"crush"},
@@ -299,6 +304,8 @@ const result=document.getElementById("result");
 const noResult=document.getElementById("noResult");
 const recentList=document.getElementById("recentList");
 const suggestions=document.getElementById("suggestions");
+const graphCard=document.getElementById("graphCard");
+const graph=document.getElementById("graph");
 const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
 let recent=JSON.parse(localStorage.getItem("recent")||"[]");
 
@@ -309,7 +316,7 @@ function renderRecent(){
     const li=document.createElement("li");
     li.innerHTML=`<span>${n}</span><span>❌</span>`;
     li.children[0].onclick=()=>{search.value=n;run();}
-    li.children[1].onclick=(e)=>{
+    li.children[1].onclick=e=>{
       e.stopPropagation();
       recent=recent.filter(x=>x!==n);
       localStorage.setItem("recent",JSON.stringify(recent));
@@ -333,11 +340,36 @@ search.oninput=()=>{
   });
 }
 
+/* 관계 그래프 */
+function renderGraph(center){
+  graph.innerHTML="";
+  graphCard.style.display="block";
+
+  const likes=relations.filter(r=>r.from===center).map(r=>r.to);
+  const likedBy=relations.filter(r=>r.to===center).map(r=>r.from);
+  const competitors=relations.filter(r=>likes.includes(r.to)&&r.from!==center).map(r=>r.from);
+
+  const all=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
+  all.forEach(p=>{
+    if(p===center) return;
+    let cls="gray";
+    if(likes.includes(p)) cls="green";
+    else if(likedBy.includes(p)) cls="orange";
+    else if(competitors.includes(p)) cls="red";
+
+    const d=document.createElement("div");
+    d.className=`node ${cls}`;
+    d.textContent=p;
+    graph.appendChild(d);
+  });
+}
+
 /* 검색 */
 function run(){
   const q=search.value.trim();
   result.innerHTML="";
   noResult.style.display="none";
+  graphCard.style.display="none";
   if(!q) return;
 
   const found=relations.filter(r=>r.from===q||r.to===q);
@@ -356,6 +388,8 @@ function run(){
     li.textContent=`${r.from} ${icon} ${r.to}`;
     result.appendChild(li);
   });
+
+  renderGraph(q);
 }
 document.getElementById("searchBtn").onclick=run;
 search.onkeydown=e=>{if(e.key==="Enter")run();}
@@ -363,9 +397,7 @@ search.onkeydown=e=>{if(e.key==="Enter")run();}
 /* 인기순위 */
 const rank=document.getElementById("rank");
 const score={};
-relations.forEach(r=>{
-  score[r.to]=(score[r.to]||0)+1;
-});
+relations.forEach(r=>{score[r.to]=(score[r.to]||0)+1;});
 rank.innerHTML=Object.entries(score)
 .sort((a,b)=>b[1]-a[1])
 .slice(0,10)
