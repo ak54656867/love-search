@@ -108,8 +108,7 @@ li {
 footer {
   text-align:center;
   padding:20px;
-  color:#000000; /* 글씨 검정으로 변경 */
-  opacity:0.6;
+  opacity:.6;
 }
 </style>
 </head>
@@ -136,6 +135,13 @@ footer {
     <h3>🔎 검색 결과</h3>
     <ul id="result"></ul>
 
+    <h3>📖 기호 설명</h3>
+    <ul>
+      <li>❤️ 현재 연애</li>
+      <li>💔 과거 연애</li>
+      <li>🔁 서로 짝사랑</li>
+      <li>➡️ 짝사랑</li>
+    </ul>
   </div>
 
   <!-- 사이드 -->
@@ -163,7 +169,7 @@ footer {
 </div>
 
 <footer>
-  버전 v3.2.1 · 업데이트 2025.12.26
+  버전 v3.1.1 · 업데이트 2025.12.26
 </footer>
 
 <script>
@@ -190,7 +196,16 @@ const relations = [
   {from:"장건우",to:"신아린",type:"crush"},
   {from:"박다온",to:"정연재",type:"breakup"},
   {from:"권희현",to:"박다온",type:"breakup"},
-  {from:"김동윤",to형",type:"crush"},
+  {from:"김동윤",to:"황하림",type:"crush"},
+  {from:"방훈테",to:"류지우",type:"crush"},
+  {from:"민효주",to:"전준형",type:"crush"},
+  {from:"민효주",to:"양제현",type:"crush"},
+  {from:"민효주",to:"장건우",type:"crush"},
+  {from:"민효주",to:"김도엽",type:"crush"},
+  {from:"이서윤",to:"전준형",type:"crush"},
+  {from:"류지우",to:"김정훈",type:"crush"},
+  {from:"이서윤",to:"정유준",type:"crush"},
+  {from:"문효진",to:"전준형",type:"crush"},
   {from:"허동하",to:"손예원",type:"crush"},
   {from:"김준우",to:"최하린",type:"crush"},
   {from:"김가영",to:"노무현",type:"crush"},
@@ -310,8 +325,5 @@ rank();
 
 </body>
 </html>
-
-
-
 
 
