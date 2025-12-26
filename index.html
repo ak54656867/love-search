@@ -310,41 +310,45 @@ search.addEventListener("keydown",e=>{
 });
 
 /* =========================
-   인기순위
+   인기순위 (개선)
 ========================= */
-function rank() {
-  const score = {};
-
-  relations.forEach(r => {
+function rank(){
+  const score={};
+  
+  relations.forEach(r=>{
     switch(r.type){
       case "crush":
-        // 짝사랑을 당한 사람만 +1 (r.to)
-        score[r.to] = (score[r.to] || 0) + 1;
+        // 짝사랑 당한 사람만 +1
+        score[r.to] = (score[r.to]||0)+1;
         break;
       case "dating":
       case "breakup":
         // 양쪽 +1
-        score[r.from] = (score[r.from] || 0) + 1;
-        score[r.to] = (score[r.to] || 0) + 1;
+        score[r.from] = (score[r.from]||0)+1;
+        score[r.to] = (score[r.to]||0)+1;
         break;
       case "mutual":
         // 서로 짝사랑 → 양쪽 +1
-        score[r.from] = (score[r.from] || 0) + 1;
-        score[r.to] = (score[r.to] || 0) + 1;
+        score[r.from] = (score[r.from]||0)+1;
+        score[r.to] = (score[r.to]||0)+1;
         break;
     }
   });
 
-  rankEl.innerHTML = Object.entries(score)
+  rankEl.innerHTML=Object.entries(score)
     .sort((a,b)=>b[1]-a[1])
     .slice(0,10)
     .map(e=>`<li>${e[0]} (${e[1]})</li>`)
     .join("");
 }
+
+rank(); // 반드시 호출
+
 </script>
 
 </body>
 </html>
+
 
 
 
