@@ -2,107 +2,192 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>🤫 Secret Search v4.2.0 🤫</title>
+<title>🤫 Secret Search v4.2.1 🤫</title>
+
 <style>
-/* =========================
-   다크/라이트 테마 스타일
-========================= */
-html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont; }
-body {
-  color: #f5f5f5;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 40%, #f5f5f5 100%);
-  transition: all 0.3s;
+html,body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont;
 }
-body.light-mode {
-  color: #222;
-  background: linear-gradient(180deg, #f5f5f5 0%, #e0e0e0 40%, #ffffff 100%);
+body{
+  min-height:100vh;
+  background:linear-gradient(180deg,#0d0d0d,#1a1a1a);
+  color:#f5f5f5;
+  transition:.3s;
 }
-header { text-align:center; padding:30px 10px; }
-h1 { margin:0; font-size:2.3rem; color:#ffffff; letter-spacing:1.5px; font-weight:bold; transition: color 0.3s; }
-body.light-mode h1 { color:#222; }
-.container { max-width:1200px; margin:auto; padding:20px; display:grid; grid-template-columns:2fr 1fr; gap:20px; }
-.card {
-  background:#1e1e1e; border-radius:16px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.6); color:#f5f5f5; transition: all 0.3s;
+body.light{
+  background:linear-gradient(180deg,#f5f5f5,#ffffff);
+  color:#222;
 }
-body.light-mode .card { background:#f0f0f0; color:#222; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
-.search-box { display:flex; gap:10px; }
-.search-box input {
-  flex:1; padding:14px; font-size:1.1rem; border-radius:12px; border:1px solid #444; background:#2a2a2a; color:#f5f5f5; transition: all 0.3s;
+header{
+  text-align:center;
+  padding:30px 10px;
 }
-body.light-mode .search-box input { background:#fff; color:#222; border:1px solid #ccc; }
-.search-box input::placeholder { color:#aaa; }
-.search-box button { padding:14px 18px; font-size:1rem; border-radius:12px; border:none; background:#4f7cff; color:#fff; cursor:pointer; transition:0.3s; }
-.search-box button:hover { opacity:0.85; }
-#suggestions { background:#2a2a2a; border-radius:10px; margin-top:6px; color:#f5f5f5; transition: all 0.3s; }
-body.light-mode #suggestions { background:#fff; color:#222; }
-#suggestions div { padding:6px; cursor:pointer; }
-#suggestions div:hover { background:#3b3b3b; }
-body.light-mode #suggestions div:hover { background:#ddd; }
-ul { padding-left:20px; }
-li { margin:6px 0; }
-.hidden { display:none; }
-#recentWrapper { margin-top:10px; background:#2a2a2a; padding:10px; border-radius:12px; transition: all 0.3s; }
-body.light-mode #recentWrapper { background:#e0e0e0; }
-#recentList li { cursor:pointer; padding:4px 6px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; }
-#recentList li:hover { background:#3b3b3b; }
-body.light-mode #recentList li:hover { background:#ccc; }
-#toggleModeBtn { margin-top:10px; padding:8px 16px; font-size:1rem; border:none; border-radius:12px; cursor:pointer; background:#4f7cff; color:#fff; transition:0.3s; }
-#toggleModeBtn:hover { opacity:0.85; }
+h1{margin:0;font-size:2.3rem;}
+button{
+  cursor:pointer;
+}
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+}
+.card{
+  background:#1e1e1e;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.6);
+  transition:.3s;
+}
+body.light .card{
+  background:#f0f0f0;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
 
-/* =========================
-   업데이트 모달
-========================= */
-#updateModal {
+.search-box{
   display:flex;
+  gap:10px;
+}
+.search-box input{
+  flex:1;
+  padding:14px;
+  font-size:1.1rem;
+  border-radius:12px;
+  border:1px solid #444;
+  background:#2a2a2a;
+  color:#fff;
+}
+body.light .search-box input{
+  background:#fff;
+  color:#222;
+  border:1px solid #ccc;
+}
+.search-box button{
+  padding:14px 18px;
+  border-radius:12px;
+  border:none;
+  background:#4f7cff;
+  color:#fff;
+}
+
+#suggestions{
+  margin-top:6px;
+  background:#2a2a2a;
+  border-radius:10px;
+}
+body.light #suggestions{
+  background:#fff;
+}
+#suggestions div{
+  padding:6px;
+  cursor:pointer;
+}
+#suggestions div:hover{
+  background:#3b3b3b;
+}
+body.light #suggestions div:hover{
+  background:#ddd;
+}
+
+#recentWrapper{
+  margin-top:10px;
+  padding:10px;
+  border-radius:12px;
+  background:#2a2a2a;
+}
+body.light #recentWrapper{
+  background:#e0e0e0;
+}
+#recentList li{
+  display:flex;
+  justify-content:space-between;
+  padding:4px 6px;
+  border-radius:6px;
+  cursor:pointer;
+}
+#recentList li:hover{
+  background:#3b3b3b;
+}
+body.light #recentList li:hover{
+  background:#ccc;
+}
+
+#noResult{
+  display:none;
+  text-align:center;
+  color:#ff6b6b;
+  margin:10px 0;
+}
+
+#legend{
+  margin-top:10px;
+  font-size:.95rem;
+}
+#legend span{
+  margin-right:10px;
+}
+
+ul{padding-left:20px;}
+li{margin:6px 0;}
+
+#toggleMode{
+  margin-top:10px;
+  padding:8px 16px;
+  border:none;
+  border-radius:12px;
+  background:#4f7cff;
+  color:#fff;
+}
+
+/* 업데이트 모달 */
+#updateModal{
   position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.6);
-  justify-content:center;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;
   align-items:center;
-  z-index:1000;
+  justify-content:center;
+  z-index:999;
 }
-#updateModal.hidden { display:none; }
-#updateModal .modalContent {
-  background:#1e1e1e; color:#f5f5f5; padding:20px;
-  border-radius:16px; width:400px; max-width:90%; box-shadow:0 10px 30px rgba(0,0,0,0.3);
-  transition: all 0.3s;
+#updateModal.hidden{display:none;}
+.modal{
+  width:400px;
+  max-width:90%;
+  background:#1e1e1e;
+  padding:20px;
+  border-radius:16px;
 }
-body.light-mode #updateModal .modalContent { background:#fff; color:#222; }
-#updateModal .modalHeader { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-#updateModal #closeBtn { cursor:pointer; font-weight:bold; font-size:1.2rem; }
-
-/* =========================
-   검색 결과 없음
-========================= */
-#noResult { text-align:center; font-size:1.2rem; color:#ff6b6b; margin:10px 0; display:none; }
-
-/* =========================
-   그래프 범례
-========================= */
-#legend { margin-top:10px; }
-#legend span { margin-right:10px; font-size:0.95rem; }
+body.light .modal{
+  background:#fff;
+  color:#222;
+}
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 </style>
 </head>
+
 <body>
 
 <header>
   <h1>🤫 Secret Search 🤫</h1>
-  <button id="toggleModeBtn">라이트 모드</button>
+  <button id="toggleMode">라이트 모드</button>
 </header>
 
 <div class="container">
 
-  <!-- 메인 -->
   <div class="card">
     <div class="search-box">
-      <input id="search" placeholder="이름 검색 (1글자 이상)">
+      <input id="search" placeholder="이름 검색">
       <button id="searchBtn">검색</button>
     </div>
     <div id="suggestions"></div>
 
-    <!-- 최근 검색 기록 -->
     <div id="recentWrapper">
       <h4>최근 검색</h4>
       <ul id="recentList"></ul>
@@ -114,56 +199,46 @@ body.light-mode #updateModal .modalContent { background:#fff; color:#222; }
     <ul id="result"></ul>
 
     <div id="legend">
-      <span>❤️ 현재 연애</span>
-      <span>💔 과거 연애</span>
+      <span>❤️ 연애</span>
+      <span>💔 과거</span>
       <span>➡️ 짝사랑</span>
-      <span>🔁 서로 짝사랑</span>
+      <span>🔁 서로</span>
+      <span>⚪ 관계없음</span>
     </div>
   </div>
 
-  <!-- 사이드 -->
-  <div>
-    <div class="card">
-      <h3>🔥 인기순위 TOP 10</h3>
-      <ul id="rank"></ul>
-    </div>
-
-    <div class="card" style="margin-top:20px">
-      <h3>관계 종류</h3>
-      <ul id="dating"></ul>
-      <ul id="breakup"></ul>
-      <ul id="crush"></ul>
-      <ul id="mutual"></ul>
-    </div>
+  <div class="card">
+    <h3>🔥 인기순위 TOP 10</h3>
+    <ul id="rank"></ul>
   </div>
 
 </div>
 
-<!-- 업데이트 모달 -->
+<!-- 업데이트 -->
 <div id="updateModal">
-  <div class="modalContent">
-    <div class="modalHeader">
-      <h2 id="modalVersion">업데이트 v4.2.0 · 2025-12-26</h2>
-      <span id="closeBtn">✖</span>
+  <div class="modal">
+    <div class="modal-header">
+      <h3>업데이트 v4.2.1 · 2025-12-26</h3>
+      <span id="closeUpdate" style="cursor:pointer">✖</span>
     </div>
-    <div id="modalContent"></div>
+    <p>
+      • 검색/최근검색 완전 복구<br>
+      • 관계 표시 로직 안정화<br>
+      • UI 구조 정리
+    </p>
   </div>
 </div>
 
 <script>
-/* =========================
-   다크/라이트 모드 토글
-========================= */
-const toggleBtn = document.getElementById("toggleModeBtn");
-toggleBtn.onclick = () => {
-  document.body.classList.toggle("light-mode");
-  toggleBtn.textContent = document.body.classList.contains("light-mode") ? "다크 모드" : "라이트 모드";
+/* 테마 */
+const toggle=document.getElementById("toggleMode");
+toggle.onclick=()=>{
+  document.body.classList.toggle("light");
+  toggle.textContent=document.body.classList.contains("light")?"다크 모드":"라이트 모드";
 };
 
-/* =========================
-   관계 데이터
-========================= */
-const relations = [
+/* 데이터 */
+const relations=[
   {from:"조민준",to:"문효진",type:"breakup"},
   {from:"강명구",to:"황혜빈",type:"dating"},
   {from:"조연아",to:"김도엽",type:"crush"},
@@ -218,149 +293,89 @@ const relations = [
   {from:"김민서",to:"이예나",type:"crush"}
 ];
 
-/* =========================
-   변수
-========================= */
-const search = document.getElementById("search");
-const searchBtn = document.getElementById("searchBtn");
-const suggestions = document.getElementById("suggestions");
-const result = document.getElementById("result");
-const noResult = document.getElementById("noResult");
-const dating = document.getElementById("dating");
-const breakup = document.getElementById("breakup");
-const crush = document.getElementById("crush");
-const mutual = document.getElementById("mutual");
-const rankEl = document.getElementById("rank");
-const recentList = document.getElementById("recentList");
+/* 변수 */
+const search=document.getElementById("search");
+const result=document.getElementById("result");
+const noResult=document.getElementById("noResult");
+const recentList=document.getElementById("recentList");
+const suggestions=document.getElementById("suggestions");
 const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
-const MAX_RECENT = 10;
-let recent = JSON.parse(localStorage.getItem("recentSearch") || "[]");
+let recent=JSON.parse(localStorage.getItem("recent")||"[]");
 
-/* =========================
-   최근 검색 렌더링
-========================= */
-function renderRecent() {
-  recentList.innerHTML = "";
-  recent.forEach(name => {
-    const li = document.createElement("li");
-
-    const span = document.createElement("span");
-    span.textContent = name;
-    span.style.cursor = "pointer";
-    span.onclick = () => { search.value = name; searchRelations(); };
-
-    const del = document.createElement("span");
-    del.textContent = "❌";
-    del.style.cursor = "pointer";
-    del.onclick = (e) => { e.stopPropagation(); removeRecent(name); };
-
-    li.appendChild(span);
-    li.appendChild(del);
+/* 최근검색 */
+function renderRecent(){
+  recentList.innerHTML="";
+  recent.forEach(n=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<span>${n}</span><span>❌</span>`;
+    li.children[0].onclick=()=>{search.value=n;run();}
+    li.children[1].onclick=(e)=>{
+      e.stopPropagation();
+      recent=recent.filter(x=>x!==n);
+      localStorage.setItem("recent",JSON.stringify(recent));
+      renderRecent();
+    }
     recentList.appendChild(li);
   });
 }
-
-function removeRecent(name){
-  recent = recent.filter(n=>n!==name);
-  localStorage.setItem("recentSearch", JSON.stringify(recent));
-  renderRecent();
-}
 renderRecent();
 
-/* =========================
-   자동완성
-========================= */
-search.addEventListener("input",()=> {
-  const q = search.value.trim();
-  suggestions.innerHTML = "";
-  if(q.length < 1) return;
-  names.filter(n => n.includes(q)).forEach(n => {
-    const d = document.createElement("div");
-    d.textContent = n;
-    d.onclick = () => { search.value = n; suggestions.innerHTML=""; searchRelations(); };
+/* 자동완성 */
+search.oninput=()=>{
+  suggestions.innerHTML="";
+  const q=search.value.trim();
+  if(!q) return;
+  names.filter(n=>n.includes(q)).forEach(n=>{
+    const d=document.createElement("div");
+    d.textContent=n;
+    d.onclick=()=>{search.value=n;suggestions.innerHTML="";run();}
     suggestions.appendChild(d);
   });
-});
-
-/* =========================
-   검색 실행
-========================= */
-function addRecent(name){
-  recent = recent.filter(n=>n!==name);
-  recent.unshift(name);
-  if(recent.length>MAX_RECENT) recent.pop();
-  localStorage.setItem("recentSearch", JSON.stringify(recent));
-  renderRecent();
 }
 
-function searchRelations(){
-  const q = search.value.trim();
+/* 검색 */
+function run(){
+  const q=search.value.trim();
   result.innerHTML="";
-  dating.innerHTML="";
-  breakup.innerHTML="";
-  crush.innerHTML="";
-  mutual.innerHTML="";
   noResult.style.display="none";
+  if(!q) return;
 
-  if(q.length<1) return;
+  const found=relations.filter(r=>r.from===q||r.to===q);
+  if(!found.length){
+    noResult.style.display="block";
+    return;
+  }
 
-  const found = relations.filter(r => r.from===q||r.to===q);
-  if(found.length===0){ noResult.style.display="block"; return; }
-
-  addRecent(q);
+  recent=[q,...recent.filter(x=>x!==q)].slice(0,10);
+  localStorage.setItem("recent",JSON.stringify(recent));
+  renderRecent();
 
   found.forEach(r=>{
-    const icon = r.type==="dating"?"❤️":r.type==="breakup"?"💔":r.type==="mutual"?"🔁":"➡️";
+    const icon=r.type==="dating"?"❤️":r.type==="breakup"?"💔":r.type==="mutual"?"🔁":"➡️";
     const li=document.createElement("li");
     li.textContent=`${r.from} ${icon} ${r.to}`;
     result.appendChild(li);
-    if(r.type==="dating") dating.appendChild(li.cloneNode(true));
-    if(r.type==="breakup") breakup.appendChild(li.cloneNode(true));
-    if(r.type==="crush") crush.appendChild(li.cloneNode(true));
-    if(r.type==="mutual") mutual.appendChild(li.cloneNode(true));
   });
 }
-searchBtn.onclick=searchRelations;
-search.addEventListener("keydown", e => { if(e.key==="Enter") searchRelations(); });
+document.getElementById("searchBtn").onclick=run;
+search.onkeydown=e=>{if(e.key==="Enter")run();}
 
-/* =========================
-   인기순위
-========================= */
-function rank(){
-  const score={};
-  relations.forEach(r=>{
-    switch(r.type){
-      case "crush": score[r.to]=(score[r.to]||0)+1; break;
-      case "dating":
-      case "breakup": score[r.from]=(score[r.from]||0)+1; score[r.to]=(score[r.to]||0)+1; break;
-      case "mutual": score[r.from]=(score[r.from]||0)+1; score[r.to]=(score[r.to]||0)+1; break;
-    }
-  });
-  rankEl.innerHTML = Object.entries(score).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
-}
-rank();
+/* 인기순위 */
+const rank=document.getElementById("rank");
+const score={};
+relations.forEach(r=>{
+  score[r.to]=(score[r.to]||0)+1;
+});
+rank.innerHTML=Object.entries(score)
+.sort((a,b)=>b[1]-a[1])
+.slice(0,10)
+.map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
 
-/* =========================
-   업데이트 모달
-========================= */
-const updateLog = {
-  version: "v4.2.0",
-  date: "2025-12-26",
-  content: [
-    "UI/UX 개선 및 버그 수정",
-    "검색 기록 삭제 버튼 복원",
-    "검색 결과 없음 문구 강조",
-    "관계 그래프 범례 추가"
-  ]
+/* 업데이트 닫기 */
+document.getElementById("closeUpdate").onclick=()=>{
+  document.getElementById("updateModal").classList.add("hidden");
 };
-
-const modal = document.getElementById("updateModal");
-const closeBtn = document.getElementById("closeBtn");
-document.getElementById("modalVersion").textContent = `업데이트 ${updateLog.version} · ${updateLog.date}`;
-document.getElementById("modalContent").innerHTML = updateLog.content.map(c=>`• ${c}`).join("<br>");
-
-// 모달 닫기
-closeBtn.onclick = () => { modal.classList.add("hidden"); };
 </script>
+
 </body>
 </html>
