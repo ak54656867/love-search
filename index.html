@@ -119,11 +119,12 @@ footer { text-align:center; padding:20px; color:#000000; opacity:0.6; }
    업데이트 정보
 ========================= */
 const updateLog = {
-  version: "v3.8.1",
+  version: "v3.8.2",
   date: "2025-12-26",
   content: [
     "검색 최근 기록 추가(3.8.1)",
-    "데이터 추가(3.8.1)"
+    "데이터 추가(3.8.1)",
+    "최근 검색기록 기능 개선(3.8.2)"
   ]
 };
 
@@ -210,15 +211,37 @@ function renderRecent() {
   recentList.innerHTML = "";
   recent.forEach(name => {
     const li = document.createElement("li");
-    li.textContent = name;
-    li.onclick = () => {
+    li.style.display = "flex";
+    li.style.justifyContent = "space-between";
+    li.style.alignItems = "center";
+
+    const span = document.createElement("span");
+    span.textContent = name;
+    span.style.cursor = "pointer";
+    span.onclick = () => {
       search.value = name;
       searchRelations();
     };
+
+    const del = document.createElement("span");
+    del.textContent = "❌";
+    del.style.cursor = "pointer";
+    del.onclick = (e) => {
+      e.stopPropagation(); // 클릭 이벤트가 부모로 가지 않도록
+      removeRecent(name);
+    };
+
+    li.appendChild(span);
+    li.appendChild(del);
     recentList.appendChild(li);
   });
 }
-renderRecent();
+
+function removeRecent(name){
+  recent = recent.filter(n=>n!==name);
+  localStorage.setItem("recentSearch", JSON.stringify(recent));
+  renderRecent();
+}
 
 /* =========================
    자동완성
@@ -303,4 +326,5 @@ window.onclick = e=>{ if(e.target===modal) modal.style.display="none"; };
 
 </body>
 </html>
+
 
