@@ -2,187 +2,125 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>🤫 Secret Search v4.1.1 🤫</title>
+<title>🤫 Secret Search🤫</title>
 <style>
-html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont; }
-body { color: #f5f5f5; min-height: 100vh; background: linear-gradient(180deg,#0d0d0d 0%,#1a1a1a 40%,#f5f5f5 100%); transition: all 0.3s; }
-body.light-mode { color: #222; background: linear-gradient(180deg,#f5f5f5 0%,#e0e0e0 40%,#fff 100%); }
-header { text-align:center; padding:30px 10px; }
-h1 { margin:0; font-size:2.3rem; color:#ffffff; letter-spacing:1.5px; font-weight:bold; transition: color 0.3s; }
-body.light-mode h1 { color:#222; }
-.container { max-width:1200px; margin:auto; padding:20px; display:grid; grid-template-columns:2fr 1fr; gap:20px; }
-.card { background:#1e1e1e; border-radius:16px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.6); color:#f5f5f5; transition: all 0.3s; }
-body.light-mode .card { background:#f0f0f0; color:#222; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
-.search-box { display:flex; gap:10px; margin-bottom:10px; }
-.search-box input { flex:1; padding:14px; font-size:1.1rem; border-radius:12px; border:1px solid #444; background:#2a2a2a; color:#f5f5f5; transition: all 0.3s; }
-body.light-mode .search-box input { background:#fff; color:#222; border:1px solid #ccc; }
-.search-box input::placeholder { color:#aaa; }
-.search-box button { padding:14px 18px; font-size:1rem; border-radius:12px; border:none; background:#4f7cff; color:#fff; cursor:pointer; transition:0.3s; }
-.search-box button:hover { opacity:0.85; }
-#suggestions { background:#2a2a2a; border-radius:10px; margin-top:6px; color:#f5f5f5; transition: all 0.3s; }
-body.light-mode #suggestions { background:#fff; color:#222; }
-#suggestions div { padding:6px; cursor:pointer; }
-#suggestions div:hover { background:#3b3b3b; }
-body.light-mode #suggestions div:hover { background:#ddd; }
-ul { padding-left:20px; margin:8px 0; }
-li { margin:6px 0; }
-.hidden { display:none; }
-#noResult { font-size:0.9rem; color:#ccc; margin-top:6px; }
-body.light-mode #noResult { color:#666; }
-#toggleModeBtn { margin-top:10px; padding:8px 16px; font-size:1rem; border:none; border-radius:12px; cursor:pointer; background:#4f7cff; color:#fff; transition:0.3s; }
-#toggleModeBtn:hover { opacity:0.85; }
-
-/* =========================
-   업데이트 모달
-========================= */
-#updateModal { display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000; }
-#updateModal.hidden { display:none; }
-#updateModal .modalContent { background:#1e1e1e; color:#f5f5f5; padding:20px; border-radius:16px; width:400px; max-width:90%; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.3); transition: all 0.3s; }
-body.light-mode #updateModal .modalContent { background:#fff; color:#222; }
-#updateModal #closeBtn { position:absolute; top:10px; right:10px; cursor:pointer; font-weight:bold; font-size:1.2rem; }
-
-/* =========================
-   관계 그래프
-========================= */
-#relationGraph { border:1px solid #444; border-radius:12px; background: #111; display:block; margin-top:10px; }
-body.light-mode #relationGraph { background:#f8f8f8; border:1px solid #ccc; }
+html, body { height:100%; margin:0; font-family: system-ui, -apple-system, BlinkMacSystemFont; }
+body { color:#f5f5f5; min-height:100vh; background:linear-gradient(180deg,#0d0d0d 0%,#1a1a1a 40%,#f5f5f5 100%); transition:all 0.3s;}
+body.light-mode { color:#222; background:linear-gradient(180deg,#f5f5f5 0%,#e0e0e0 40%,#fff 100%);}
+header{text-align:center;padding:30px 10px;}
+h1{margin:0;font-size:2.3rem;color:#fff;letter-spacing:1.5px;font-weight:bold;transition:color 0.3s;}
+body.light-mode h1{color:#222;}
+.container{max-width:1200px;margin:auto;padding:20px;display:grid;grid-template-columns:2fr 1fr;gap:20px;}
+.card{background:#1e1e1e;border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.6);color:#f5f5f5;transition:all 0.3s;}
+body.light-mode .card{background:#f0f0f0;color:#222;box-shadow:0 10px 30px rgba(0,0,0,0.2);}
+.search-box{display:flex;gap:10px;}
+.search-box input{flex:1;padding:14px;font-size:1.1rem;border-radius:12px;border:1px solid #444;background:#2a2a2a;color:#f5f5f5;transition:all 0.3s;}
+body.light-mode .search-box input{background:#fff;color:#222;border:1px solid #ccc;}
+.search-box input::placeholder{color:#aaa;}
+.search-box button{padding:14px 18px;font-size:1rem;border-radius:12px;border:none;background:#4f7cff;color:#fff;cursor:pointer;transition:0.3s;}
+.search-box button:hover{opacity:0.85;}
+#suggestions{background:#2a2a2a;border-radius:10px;margin-top:6px;color:#f5f5f5;transition:all 0.3s;}
+body.light-mode #suggestions{background:#fff;color:#222;}
+#suggestions div{padding:6px;cursor:pointer;}
+#suggestions div:hover{background:#3b3b3b;}
+body.light-mode #suggestions div:hover{background:#ddd;}
+ul{padding-left:20px;}
+li{margin:6px 0;}
+.hidden{display:none;}
+footer{text-align:center;padding:20px;color:#000000;opacity:0.6;}
+#recentWrapper{margin-top:10px;background:#2a2a2a;padding:10px;border-radius:12px;transition:all 0.3s;}
+body.light-mode #recentWrapper{background:#e0e0e0;}
+#recentList li{cursor:pointer;padding:4px 6px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;}
+#recentList li:hover{background:#3b3b3b;}
+body.light-mode #recentList li:hover{background:#ccc;}
+#toggleModeBtn{margin-top:10px;padding:8px 16px;font-size:1rem;border:none;border-radius:12px;cursor:pointer;background:#4f7cff;color:#fff;transition:0.3s;}
+#toggleModeBtn:hover{opacity:0.85;}
+#updateModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:1000;}
+#updateModal .modalContent{background:#1e1e1e;color:#f5f5f5;padding:20px;border-radius:16px;width:400px;max-width:90%;position:relative;box-shadow:0 10px 30px rgba(0,0,0,0.3);transition:all 0.3s;}
+body.light-mode #updateModal .modalContent{background:#fff;color:#222;}
+#updateModal #closeBtn{position:absolute;top:10px;right:10px;cursor:pointer;font-weight:bold;font-size:1.2rem;}
+canvas{width:100%;height:400px;border-radius:16px;background:#2a2a2a;margin-top:20px;display:block;}
+body.light-mode canvas{background:#f0f0f0;}
 </style>
 </head>
 <body>
-
 <header>
-  <h1>🤫 Secret Search 🤫</h1>
-  <button id="toggleModeBtn">라이트 모드</button>
+<h1>🤫 Secret Search🤫</h1>
+<button id="toggleModeBtn">라이트 모드</button>
 </header>
-
 <div class="container">
-  <div class="card">
-    <div class="search-box">
-      <input id="search" placeholder="이름 검색 (1글자 이상)">
-      <button id="searchBtn">검색</button>
-    </div>
-
-    <div id="suggestions"></div>
-    <p id="noResult" class="hidden">🔍 검색 결과가 없습니다.</p>
-
-    <h3>🔎 검색 결과</h3>
-    <ul id="result"></ul>
-
-    <h3>📖 기호 설명</h3>
-    <ul>
-      <li>❤️ 현재 연애</li>
-      <li>💔 과거 연애</li>
-      <li>🔁 서로 짝사랑</li>
-      <li>➡️ 짝사랑</li>
-    </ul>
-
-    <!-- 관계 그래프 -->
-    <h3>🌐 관계 그래프</h3>
-    <canvas id="relationGraph" width="400" height="400"></canvas>
-  </div>
-
-  <div>
-    <div class="card">
-      <h3>🔥 인기순위 TOP 10</h3>
-      <ul id="rank"></ul>
-    </div>
-
-    <div class="card" style="margin-top:20px">
-      <h3>❤️ 현재 연애</h3>
-      <ul id="dating"></ul>
-
-      <h3>💔 과거 연애</h3>
-      <ul id="breakup"></ul>
-
-      <h3>➡️ 짝사랑</h3>
-      <ul id="crush"></ul>
-
-      <h3>🔁 서로 짝사랑</h3>
-      <ul id="mutual"></ul>
-    </div>
-  </div>
+<div class="card">
+<div class="search-box">
+<input id="search" placeholder="이름 검색 (1글자 이상)">
+<button id="searchBtn">검색</button>
 </div>
-
-<!-- 업데이트 모달 -->
+<div id="suggestions"></div>
+<div id="recentWrapper">
+<h4>최근 검색</h4>
+<ul id="recentList"></ul>
+<button id="clearRecentBtn">검색기록 삭제</button>
+</div>
+<p id="noResult" class="hidden">🔍 검색 결과가 없습니다.</p>
+<h3>🔎 검색 결과</h3>
+<ul id="result"></ul>
+<h3>📖 기호 설명</h3>
+<ul>
+<li>❤️ 현재 연애</li>
+<li>💔 과거 연애</li>
+<li>🔁 서로 짝사랑</li>
+<li>➡️ 짝사랑</li>
+</ul>
+<canvas id="relationGraph"></canvas>
+</div>
+<div>
+<div class="card">
+<h3>🔥 인기순위 TOP 10</h3>
+<ul id="rank"></ul>
+</div>
+<div class="card" style="margin-top:20px">
+<h3>업데이트 로그</h3>
+<div id="updateLogContent"></div>
+</div>
+</div>
+</div>
+<!-- 모달 -->
 <div id="updateModal">
-  <div class="modalContent">
-    <span id="closeBtn">✖</span>
-    <h2 id="modalVersion"></h2>
-    <div id="modalContent"></div>
-  </div>
+<div class="modalContent">
+<span id="closeBtn">✖</span>
+<h2 id="modalVersion"></h2>
+<div id="modalContent"></div>
 </div>
-
+</div>
 <script>
-/* =========================
-   다크/라이트 모드
-========================= */
+// 다크/라이트 모드
 const toggleBtn = document.getElementById("toggleModeBtn");
 toggleBtn.onclick = () => {
-  document.body.classList.toggle("light-mode");
-  toggleBtn.textContent = document.body.classList.contains("light-mode") ? "다크 모드" : "라이트 모드";
+document.body.classList.toggle("light-mode");
+toggleBtn.textContent = document.body.classList.contains("light-mode")?"다크 모드":"라이트 모드";
 };
 
-/* =========================
-   관계 데이터
-========================= */
+// 관계 데이터
 const relations = [
-  {from:"조민준",to:"문효진",type:"breakup"},
-  {from:"강명구",to:"황혜빈",type:"dating"},
-  {from:"조연아",to:"김도엽",type:"crush"},
-  {from:"손예원",to:"전준형",type:"crush"},
-  {from:"최하린",to:"전준형",type:"crush"},
-  {from:"조연아",to:"전준형",type:"crush"},
-  {from:"양제현",to:"조연아",type:"breakup"},
-  {from:"민정호",to:"이수현",type:"crush"},
-  {from:"최시훈",to:"유동우",type:"mutual"},
-  {from:"최시훈",to:"전준형",type:"dating"},
-  {from:"안진우",to:"최하린",type:"breakup"},
-  {from:"김도엽",to:"최하린",type:"crush"},
-  {from:"손지호",to:"민효주",type:"breakup"},
-  {from:"이믿음",to:"이가율",type:"breakup"},
-  {from:"민정호",to:"조연아",type:"crush"},
-  {from:"조하영",to:"이믿음",type:"crush"},
-  {from:"김동윤",to:"류지우",type:"crush"},
-  {from:"김동윤",to:"손예원",type:"crush"},
-  {from:"정은우",to:"심채원",type:"crush"},
-  {from:"박성제",to:"최하린",type:"crush"},
-  {from:"장건우",to:"신아린",type:"crush"},
-  {from:"박다온",to:"정연재",type:"breakup"},
-  {from:"권희현",to:"박다온",type:"breakup"},
-  {from:"김동윤",to:"황하림",type:"crush"},
-  {from:"방훈태",to:"류지우",type:"crush"},
-  {from:"민효주",to:"전준형",type:"crush"},
-  {from:"민효주",to:"양제현",type:"crush"},
-  {from:"민효주",to:"장건우",type:"crush"},
-  {from:"민효주",to:"김도엽",type:"crush"},
-  {from:"이서윤",to:"전준형",type:"crush"},
-  {from:"류지우",to:"김정훈",type:"crush"},
-  {from:"이서윤",to:"정유준",type:"crush"},
-  {from:"문효진",to:"전준형",type:"crush"},
-  {from:"허동하",to:"손예원",type:"crush"},
-  {from:"김준우",to:"최하린",type:"crush"},
-  {from:"김가영",to:"노무현",type:"crush"},
-  {from:"허동하",to:"이수현",type:"crush"},
-  {from:"허동하",to:"김규리",type:"crush"},
-  {from:"김동건",to:"김재희",type:"crush"},
-  {from:"허동하",to:"최하린",type:"crush"},
-  {from:"강명구",to:"문효진",type:"breakup"},
-  {from:"방훈태",to:"임유리",type:"breakup"},
-  {from:"박경담",to:"조연아",type:"crush"},
-  {from:"김도원",to:"심채원",type:"crush"},
-  {from:"이지우",to:"안진우",type:"dating"},
-  {from:"이믿음",to:"신아린",type:"crush"},
-  {from:"유동우",to:"조하영",type:"crush"},
-  {from:"김도엽",to:"최시훈",type:"crush"},
-  {from:"방훈태",to:"최시훈",type:"crush"},
-  {from:"허동하",to:"신아린",type:"breakup"},
-  {from:"방훈태",to:"황혜빈",type:"breakup"},
-  {from:"김민서",to:"이예나",type:"crush"}
-];
+{from:"조민준",to:"문효진",type:"breakup"},{from:"강명구",to:"황혜빈",type:"dating"},{from:"조연아",to:"김도엽",type:"crush"},
+{from:"손예원",to:"전준형",type:"crush"},{from:"최하린",to:"전준형",type:"crush"},{from:"조연아",to:"전준형",type:"crush"},
+{from:"양제현",to:"조연아",type:"breakup"},{from:"민정호",to:"이수현",type:"crush"},{from:"최시훈",to:"유동우",type:"mutual"},
+{from:"최시훈",to:"전준형",type:"dating"},{from:"안진우",to:"최하린",type:"breakup"},{from:"김도엽",to:"최하린",type:"crush"},
+{from:"손지호",to:"민효주",type:"breakup"},{from:"이믿음",to:"이가율",type:"breakup"},{from:"민정호",to:"조연아",type:"crush"},
+{from:"조하영",to:"이믿음",type:"crush"},{from:"김동윤",to:"류지우",type:"crush"},{from:"김동윤",to:"손예원",type:"crush"},
+{from:"정은우",to:"심채원",type:"crush"},{from:"박성제",to:"최하린",type:"crush"},{from:"장건우",to:"신아린",type:"crush"},
+{from:"박다온",to:"정연재",type:"breakup"},{from:"권희현",to:"박다온",type:"breakup"},{from:"김동윤",to:"황하림",type:"crush"},
+{from:"방훈태",to:"류지우",type:"crush"},{from:"민효주",to:"전준형",type:"crush"},{from:"민효주",to:"양제현",type:"crush"},
+{from:"민효주",to:"장건우",type:"crush"},{from:"민효주",to:"김도엽",type:"crush"},{from:"이서윤",to:"전준형",type:"crush"},
+{from:"류지우",to:"김정훈",type:"crush"},{from:"이서윤",to:"정유준",type:"crush"},{from:"문효진",to:"전준형",type:"crush"},
+{from:"허동하",to:"손예원",type:"crush"},{from:"김준우",to:"최하린",type:"crush"},{from:"김가영",to:"노무현",type:"crush"},
+{from:"허동하",to:"이수현",type:"crush"},{from:"허동하",to:"김규리",type:"crush"},{from:"김동건",to:"김재희",type:"crush"},
+{from:"허동하",to:"최하린",type:"crush"},{from:"강명구",to:"문효진",type:"breakup"},{from:"방훈태",to:"임유리",type:"breakup"},
+{from:"박경담",to:"조연아",type:"crush"},{from:"김도원",to:"심채원",type:"crush"},{from:"이지우",to:"안진우",type:"dating"},
+{from:"이믿음",to:"신아린",type:"crush"},{from:"유동우",to:"조하영",type:"crush"},{from:"김도엽",to:"최시훈",type:"crush"},
+{from:"방훈태",to:"최시훈",type:"crush"},{from:"허동하",to:"신아린",type:"breakup"},{from:"방훈태",to:"황혜빈",type:"breakup"},
+{from:"김민서",to:"이예나",type:"crush"}];
 
-/* =========================
-   검색, 자동완성, 최근검색
-========================= */
+// 변수
 const search = document.getElementById("search");
 const searchBtn = document.getElementById("searchBtn");
 const suggestions = document.getElementById("suggestions");
@@ -193,146 +131,125 @@ const breakup = document.getElementById("breakup");
 const crush = document.getElementById("crush");
 const mutual = document.getElementById("mutual");
 const rankEl = document.getElementById("rank");
-const names = [...new Set(relations.flatMap(r=>[r.from,r.to]))];
-const MAX_RECENT = 10;
-let recent = JSON.parse(localStorage.getItem("recentSearch") || "[]");
+const recentList = document.getElementById("recentList");
+const clearRecentBtn = document.getElementById("clearRecentBtn");
+const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
+const MAX_RECENT=10;
+let recent=JSON.parse(localStorage.getItem("recentSearch")||"[]");
 
-function renderRecent() {
-  recentList.innerHTML = "";
-  recent.forEach(name => {
-    const li = document.createElement("li");
-    const span = document.createElement("span");
-    span.textContent = name;
-    span.style.cursor = "pointer";
-    span.onclick = () => { search.value = name; searchRelations(); };
-    li.appendChild(span);
-    recentList.appendChild(li);
-  });
-}
+// 최근 검색 렌더링
+function renderRecent(){
+recentList.innerHTML="";
+recent.forEach(name=>{
+const li=document.createElement("li");
+const span=document.createElement("span");
+span.textContent=name;
+span.style.cursor="pointer";
+span.onclick=()=>{search.value=name; searchRelations();}
+const del=document.createElement("span");
+del.textContent="❌";
+del.style.cursor="pointer";
+del.onclick=(e)=>{e.stopPropagation(); removeRecent(name);}
+li.appendChild(span);
+li.appendChild(del);
+recentList.appendChild(li);
+});}
+function removeRecent(name){
+recent=recent.filter(n=>n!==name);
+localStorage.setItem("recentSearch",JSON.stringify(recent));
+renderRecent();}
 renderRecent();
+clearRecentBtn.onclick=()=>{
+recent=[];
+localStorage.setItem("recentSearch",JSON.stringify(recent));
+renderRecent();
+};
 
-search.addEventListener("input", () => {
-  const q = search.value.trim();
-  suggestions.innerHTML = "";
-  if(q.length < 1) return;
-  names.filter(n=>n.includes(q)).forEach(n=>{
-    const d = document.createElement("div");
-    d.textContent = n;
-    d.onclick = ()=>{ search.value=n; suggestions.innerHTML=""; searchRelations(); };
-    suggestions.appendChild(d);
-  });
-});
+// 자동완성
+search.addEventListener("input",()=>{
+const q=search.value.trim();
+suggestions.innerHTML="";
+if(q.length<1) return;
+names.filter(n=>n.includes(q)).forEach(n=>{
+const d=document.createElement("div");
+d.textContent=n;
+d.onclick=()=>{search.value=n; suggestions.innerHTML=""; searchRelations();};
+suggestions.appendChild(d);
+});});
 
+// 검색 실행
 function addRecent(name){
-  recent = recent.filter(n=>n!==name);
-  recent.unshift(name);
-  if(recent.length>MAX_RECENT) recent.pop();
-  localStorage.setItem("recentSearch", JSON.stringify(recent));
-  renderRecent();
-}
-
+recent=recent.filter(n=>n!==name);
+recent.unshift(name);
+if(recent.length>MAX_RECENT) recent.pop();
+localStorage.setItem("recentSearch",JSON.stringify(recent));
+renderRecent();}
 function searchRelations(){
-  const q = search.value.trim();
-  result.innerHTML="";
-  dating.innerHTML="";
-  breakup.innerHTML="";
-  crush.innerHTML="";
-  mutual.innerHTML="";
-  if(q.length<1) return;
-  const found = relations.filter(r=>r.from===q||r.to===q);
-  noResult.classList.toggle("hidden", found.length>0);
-  if(found.length===0) return;
-  addRecent(q);
-  found.forEach(r=>{
-    const icon = r.type==="dating"?"❤️":r.type==="breakup"?"💔":r.type==="mutual"?"🔁":"➡️";
-    const li = document.createElement("li");
-    li.textContent = `${r.from} ${icon} ${r.to}`;
-    result.appendChild(li);
-    if(r.type==="dating") dating.appendChild(li.cloneNode(true));
-    if(r.type==="breakup") breakup.appendChild(li.cloneNode(true));
-    if(r.type==="crush") crush.appendChild(li.cloneNode(true));
-    if(r.type==="mutual") mutual.appendChild(li.cloneNode(true));
-  });
-}
-searchBtn.onclick = searchRelations;
-search.addEventListener("keydown", e=>{ if(e.key==="Enter") searchRelations(); });
+const q=search.value.trim();
+result.innerHTML=""; dating.innerHTML=""; breakup.innerHTML=""; crush.innerHTML=""; mutual.innerHTML="";
+noResult.classList.add("hidden");
+if(q.length<1) return;
+const found=relations.filter(r=>r.from===q||r.to===q);
+if(found.length===0){ noResult.classList.remove("hidden"); return;}
+addRecent(q);
+found.forEach(r=>{
+const icon=r.type==="dating"?"❤️":r.type==="breakup"?"💔":r.type==="mutual"?"🔁":"➡️";
+const li=document.createElement("li");
+li.textContent=`${r.from} ${icon} ${r.to}`;
+result.appendChild(li);
+if(r.type==="dating") dating.appendChild(li.cloneNode(true));
+if(r.type==="breakup") breakup.appendChild(li.cloneNode(true));
+if(r.type==="crush") crush.appendChild(li.cloneNode(true));
+if(r.type==="mutual") mutual.appendChild(li.cloneNode(true));
+});}
+searchBtn.onclick=searchRelations;
+search.addEventListener("keydown",e=>{if(e.key==="Enter") searchRelations();});
 
-/* =========================
-   인기순위
-========================= */
+// 인기순위
 function rank(){
-  const score = {};
-  relations.forEach(r=>{
-    switch(r.type){
-      case "crush": score[r.to]=(score[r.to]||0)+1; break;
-      case "dating":
-      case "breakup":
-      case "mutual": score[r.from]=(score[r.from]||0)+1; score[r.to]=(score[r.to]||0)+1; break;
-    }
-  });
-  rankEl.innerHTML = Object.entries(score).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
-}
+const score={};
+relations.forEach(r=>{
+switch(r.type){
+case"crush":score[r.to]=(score[r.to]||0)+1;break;
+case"dating":case"breakup":score[r.from]=(score[r.from]||0)+1;score[r.to]=(score[r.to]||0)+1;break;
+case"mutual":score[r.from]=(score[r.from]||0)+1;score[r.to]=(score[r.to]||0)+1;break;}});
+rankEl.innerHTML=Object.entries(score).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");}
 rank();
 
-/* =========================
-   업데이트 모달
-========================= */
-const updateLog = { version: "v4.1.1", date: "2025-12-26", content: ["관계 그래프 추가 및 색상 의미 반영", "UI/UX 개선, 모달 버튼 위치 조정"] };
-const modal = document.getElementById("updateModal");
-const closeBtn = document.getElementById("closeBtn");
-document.getElementById("modalVersion").textContent = `업데이트 ${updateLog.version} · ${updateLog.date}`;
-document.getElementById("modalContent").innerHTML = updateLog.content.map(c=>`• ${c}`).join("<br>");
-closeBtn.onclick = ()=> modal.classList.add("hidden");
+// 업데이트 로그
+const updateLog={version:"v4.0.0",date:"2025-12-26",content:["관계 그래프 추가 및 시각화","UI/UX 개선","검색 기록 삭제 기능 추가"]};
+document.getElementById("updateLogContent").innerHTML=updateLog.content.map(c=>`• ${c}`).join("<br>");
+const modal=document.getElementById("updateModal");
+const closeBtn=document.getElementById("closeBtn");
+document.getElementById("modalVersion").textContent=`업데이트 ${updateLog.version} · ${updateLog.date}`;
+document.getElementById("modalContent").innerHTML=updateLog.content.map(c=>`• ${c}`).join("<br>");
+modal.style.display="flex";
+closeBtn.onclick=()=>{modal.style.display="none";};
 
-/* =========================
-   관계 그래프 그리기
-========================= */
-const canvas = document.getElementById("relationGraph");
-const ctx = canvas.getContext("2d");
-const nodeRadius = 20;
-const padding = 50;
-const centerX = canvas.width/2;
-const centerY = canvas.height/2;
-const radius = Math.min(canvas.width,canvas.height)/2 - padding;
-const nodePos = {};
-uniqueNames.forEach((name,i)=>{
-  const angle = (i/uniqueNames.length)*Math.PI*2;
-  nodePos[name] = { x: centerX+radius*Math.cos(angle), y: centerY+radius*Math.sin(angle) };
-});
-
-function getLineColor(r){
-  if(r.type==="mutual"||r.type==="dating") return "green";
-  if(r.type==="crush"){
-    const targetHasOtherCrush = relations.some(o=>o.from!==r.from && o.to===r.to && o.type==="crush");
-    return targetHasOtherCrush ? "red" : "yellow";
-  }
-  return "gray";
-}
-
+// 관계 그래프
+function drawGraph(){
+const canvas=document.getElementById("relationGraph");
+const ctx=canvas.getContext("2d");
+canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight;
+const nodes=names.map((n,i)=>({name:n,x:100+Math.random()*(canvas.width-200),y:100+Math.random()*(canvas.height-200)}));
+ctx.clearRect(0,0,canvas.width,canvas.height);
 relations.forEach(r=>{
-  const from = nodePos[r.from];
-  const to = nodePos[r.to];
-  ctx.beginPath();
-  ctx.moveTo(from.x, from.y);
-  ctx.lineTo(to.x, to.y);
-  ctx.strokeStyle = getLineColor(r);
-  ctx.lineWidth = 2;
-  ctx.stroke();
-});
-
-Object.entries(nodePos).forEach(([name,pos])=>{
-  ctx.beginPath();
-  ctx.arc(pos.x,pos.y,nodeRadius,0,Math.PI*2);
-  ctx.fillStyle = "#4f7cff";
-  ctx.fill();
-  ctx.strokeStyle = "#222";
-  ctx.stroke();
-  ctx.fillStyle = "#fff";
-  ctx.font="12px sans-serif";
-  ctx.textAlign="center";
-  ctx.textBaseline="middle";
-  ctx.fillText(name,pos.x,pos.y);
-});
+const from=nodes.find(n=>n.name===r.from);
+const to=nodes.find(n=>n.name===r.to);
+let color="#888";
+if(r.type==="dating"||r.type==="mutual") color="green";
+else if(r.type==="crush") color="yellow";
+else if(r.type==="breakup") color="red";
+ctx.strokeStyle=color;
+ctx.lineWidth=2;
+ctx.beginPath();
+ctx.moveTo(from.x,from.y);
+ctx.lineTo(to.x,to.y);
+ctx.stroke();});
+ctx.fillStyle="#4f7cff";
+nodes.forEach(n=>{ctx.beginPath();ctx.arc(n.x,n.y,12,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff";ctx.font="12px sans-serif";ctx.fillText(n.name,n.x-10,n.y+4);ctx.fillStyle="#4f7cff";});}
+window.addEventListener("resize",drawGraph);
+drawGraph();
 </script>
 </body>
 </html>
