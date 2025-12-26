@@ -174,7 +174,7 @@ footer {
   <!-- 메인 -->
   <div class="card">
     <div class="search-box">
-      <input id="search" placeholder="이름 검색 (2글자 이상)">
+      <input id="search" placeholder="이름 검색 (1글자 이상)">
       <button id="searchBtn">검색</button>
     </div>
 
@@ -317,7 +317,7 @@ const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
 search.addEventListener("input",()=>{
   const q=search.value.trim();
   suggestions.innerHTML="";
-  if(q.length<2) return;
+  if(q.length < 1) return;
 
   names.filter(n=>n.includes(q)).forEach(n=>{
     const d=document.createElement("div");
@@ -425,6 +425,7 @@ window.onclick = (e) => { if(e.target === modal) modal.style.display = "none"; }
 
 </body>
 </html>
+
 
 
 
