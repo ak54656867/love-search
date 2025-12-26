@@ -224,12 +224,13 @@ body.light .modal{
 <div id="updateModal">
   <div class="modal">
     <div class="modal-header">
-      <h3>업데이트 v5.1.1 · 2025-12-26</h3>
+      <h3>업데이트 v5.1.2 · 2025-12-26</h3>
       <span id="closeUpdate" style="cursor:pointer">✖</span>
     </div>
     <p>
-      • 관계 그래프 시각화 추가<br>
-      • 호감/경쟁 관계 자동 색상 분류
+      • 관계 그래프 시각화 추가(5.1.1)<br>
+      • 호감/경쟁 관계 자동 색상 분류(5.1.1)<br>
+      • 검색 기능 개선(5.1.2)
     </p>
   </div>
 </div>
@@ -315,7 +316,12 @@ function renderRecent(){
   recent.forEach(n=>{
     const li=document.createElement("li");
     li.innerHTML=`<span>${n}</span><span>❌</span>`;
-    li.children[0].onclick=()=>{search.value=n;run();}
+    li.children[0].onclick = () => {
+  search.value = n;
+  suggestions.innerHTML = "";   // 자동완성 제거
+  search.focus();               // 포커스 이동
+  run();                         // 즉시 재검색
+};
     li.children[1].onclick=e=>{
       e.stopPropagation();
       recent=recent.filter(x=>x!==n);
@@ -411,4 +417,5 @@ document.getElementById("closeUpdate").onclick=()=>{
 
 </body>
 </html>
+
 
