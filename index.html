@@ -6,56 +6,60 @@
 
 <style>
 /* =========================
-   다크 시크 테마 스타일
+   다크/라이트 테마 스타일
 ========================= */
-html, body { height: 100%; margin: 0; }
+html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont; }
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont;
   color: #f5f5f5;
   min-height: 100vh;
   background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 40%, #f5f5f5 100%);
+  transition: all 0.3s;
+}
+body.light-mode {
+  color: #222;
+  background: linear-gradient(180deg, #f5f5f5 0%, #e0e0e0 40%, #ffffff 100%);
 }
 header { text-align:center; padding:30px 10px; }
-h1 { margin:0; font-size:2.3rem; color:#ffffff; font-family:'Verdana','Geneva',sans-serif; letter-spacing:1.5px; font-weight:bold; }
+h1 { margin:0; font-size:2.3rem; color:#ffffff; letter-spacing:1.5px; font-weight:bold; transition: color 0.3s; }
+body.light-mode h1 { color:#222; }
 .container { max-width:1200px; margin:auto; padding:20px; display:grid; grid-template-columns:2fr 1fr; gap:20px; }
-.card { background:#1e1e1e; border-radius:16px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.6); color:#f5f5f5; }
+.card {
+  background:#1e1e1e; border-radius:16px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.6); color:#f5f5f5; transition: all 0.3s;
+}
+body.light-mode .card { background:#f0f0f0; color:#222; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
 .search-box { display:flex; gap:10px; }
-.search-box input { flex:1; padding:14px; font-size:1.1rem; border-radius:12px; border:1px solid #444; background:#2a2a2a; color:#f5f5f5; }
+.search-box input {
+  flex:1; padding:14px; font-size:1.1rem; border-radius:12px; border:1px solid #444; background:#2a2a2a; color:#f5f5f5; transition: all 0.3s;
+}
+body.light-mode .search-box input { background:#fff; color:#222; border:1px solid #ccc; }
 .search-box input::placeholder { color:#aaa; }
 .search-box button { padding:14px 18px; font-size:1rem; border-radius:12px; border:none; background:#4f7cff; color:#fff; cursor:pointer; transition:0.3s; }
 .search-box button:hover { opacity:0.85; }
-#suggestions { background:#2a2a2a; border-radius:10px; margin-top:6px; color:#f5f5f5; }
+#suggestions { background:#2a2a2a; border-radius:10px; margin-top:6px; color:#f5f5f5; transition: all 0.3s; }
+body.light-mode #suggestions { background:#fff; color:#222; }
 #suggestions div { padding:6px; cursor:pointer; }
 #suggestions div:hover { background:#3b3b3b; }
+body.light-mode #suggestions div:hover { background:#ddd; }
 ul { padding-left:20px; }
 li { margin:6px 0; }
 .hidden { display:none; }
 footer { text-align:center; padding:20px; color:#000000; opacity:0.6; }
-/* 최근 검색 */
-#recentWrapper { margin-top:10px; background:#2a2a2a; padding:10px; border-radius:12px; }
+#recentWrapper { margin-top:10px; background:#2a2a2a; padding:10px; border-radius:12px; transition: all 0.3s; }
+body.light-mode #recentWrapper { background:#e0e0e0; }
 #recentList li { cursor:pointer; padding:4px 6px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; }
 #recentList li:hover { background:#3b3b3b; }
-/* 업데이트 모달 */
-.modal { display: block; position: fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color: rgba(0,0,0,0.7); }
-.modal-content { background:#1e1e1e; color:#f5f5f5; margin:15% auto; padding:20px; border-radius:12px; width:80%; max-width:400px; text-align:center; position:relative; }
-#closeBtn { position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; }
+body.light-mode #recentList li:hover { background:#ccc; }
+#toggleModeBtn { margin-top:10px; padding:8px 16px; font-size:1rem; border:none; border-radius:12px; cursor:pointer; background:#4f7cff; color:#fff; transition:0.3s; }
+#toggleModeBtn:hover { opacity:0.85; }
 </style>
 </head>
 
 <body>
 
-<!-- 업데이트 로그 모달 -->
-<div id="updateModal" class="modal">
-  <div class="modal-content">
-    <span id="closeBtn">&times;</span>
-    <h2 id="modalVersion">업데이트</h2>
-    <p id="modalContent"></p>
-  </div>
-</div>
-
 <header>
   <h1>🤫 Secret Search🤫</h1>
   <p>이름으로 관계 검색</p>
+  <button id="toggleModeBtn">라이트 모드</button>
 </header>
 
 <div class="container">
@@ -113,18 +117,16 @@ footer { text-align:center; padding:20px; color:#000000; opacity:0.6; }
 
 </div>
 
-<footer id="footerVersion"></footer>
+<footer id="footerVersion">버전 v3.9.1 · 2025-12-26</footer>
 
 <script>
 /* =========================
-   업데이트 정보
+   다크/라이트 모드 토글
 ========================= */
-const updateLog = {
-  version: "v3.9.1",
-  date: "2025-12-26",
-  content: [
-    "다크/라이트 모드 전환 기능 추가(3.9.1)"
-  ]
+const toggleBtn = document.getElementById("toggleModeBtn");
+toggleBtn.onclick = () => {
+  document.body.classList.toggle("light-mode");
+  toggleBtn.textContent = document.body.classList.contains("light-mode") ? "다크 모드" : "라이트 모드";
 };
 
 /* =========================
@@ -214,18 +216,12 @@ function renderRecent() {
     const span = document.createElement("span");
     span.textContent = name;
     span.style.cursor = "pointer";
-    span.onclick = () => {
-      search.value = name;
-      searchRelations();
-    };
+    span.onclick = () => { search.value = name; searchRelations(); };
 
     const del = document.createElement("span");
     del.textContent = "❌";
     del.style.cursor = "pointer";
-    del.onclick = (e) => {
-      e.stopPropagation();
-      removeRecent(name);
-    };
+    del.onclick = (e) => { e.stopPropagation(); removeRecent(name); };
 
     li.appendChild(span);
     li.appendChild(del);
@@ -238,6 +234,7 @@ function removeRecent(name){
   localStorage.setItem("recentSearch", JSON.stringify(recent));
   renderRecent();
 }
+renderRecent();
 
 /* =========================
    자동완성
@@ -307,17 +304,6 @@ function rank(){
   rankEl.innerHTML=Object.entries(score).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
 }
 rank();
-
-/* =========================
-   업데이트 모달
-========================= */
-const modal = document.getElementById("updateModal");
-const closeBtn = document.getElementById("closeBtn");
-document.getElementById("modalVersion").textContent = `업데이트 ${updateLog.version} · ${updateLog.date}`;
-document.getElementById("modalContent").innerHTML = updateLog.content.map(c=>`• ${c}`).join("<br>");
-document.getElementById("footerVersion").textContent = `버전 ${updateLog.version} · 업데이트 ${updateLog.date}`;
-closeBtn.onclick = () => { modal.style.display="none"; };
-window.onclick = e=>{ if(e.target===modal) modal.style.display="none"; };
 </script>
 
 </body>
