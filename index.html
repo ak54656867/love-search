@@ -159,13 +159,8 @@ footer {
 <div id="updateModal" class="modal">
   <div class="modal-content">
     <span id="closeBtn">&times;</span>
-    <h2>업데이트 v3.6.1</h2>
-    <p>
-      • 인기 시스템 개선<br>
-      • UI/UX 개선<br>
-      • 업데이트 로그 추가/개선
-    </p>
-    <p>업데이트 일시: <span id="updateTime"></span></p>
+    <h2 id="modalVersion">업데이트</h2>
+    <p id="modalContent"></p>
   </div>
 </div>
 
@@ -222,11 +217,24 @@ footer {
 
 </div>
 
-<footer>
-  버전 v3.6.1
+<footer id="footerVersion">
 </footer>
 
 <script>
+/* =========================
+   업데이트 정보
+========================= */
+const updateLog = {
+  version: "v3.7.0",
+  date: "2025-12-30",
+  content: [
+    "인기 시스템 개선",
+    "UI/UX 개선",
+    "업데이트 로그 개선",
+    "버그 수정"
+  ]
+};
+
 /* =========================
    관계 데이터
 ========================= */
@@ -394,17 +402,17 @@ function rank(){
 rank();
 
 /* =========================
-   업데이트 모달 제어 및 시간 표시
+   업데이트 모달 적용
 ========================= */
 const modal = document.getElementById("updateModal");
 const closeBtn = document.getElementById("closeBtn");
-const updateTime = document.getElementById("updateTime");
 
-// 현재 날짜·시간 포맷
-const now = new Date();
-const formatted = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ` +
-                  `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-updateTime.textContent = formatted;
+// 모달 내용 적용
+document.getElementById("modalVersion").textContent = `업데이트 ${updateLog.version} · ${updateLog.date}`;
+document.getElementById("modalContent").innerHTML = updateLog.content.map(c=>`• ${c}`).join("<br>");
+
+// 바닥글에도 표시
+document.getElementById("footerVersion").textContent = `버전 ${updateLog.version} · 업데이트 ${updateLog.date}`;
 
 // 모달 닫기
 closeBtn.onclick = () => { modal.style.display = "none"; };
