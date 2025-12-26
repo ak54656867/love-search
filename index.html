@@ -159,12 +159,13 @@ footer {
 <div id="updateModal" class="modal">
   <div class="modal-content">
     <span id="closeBtn">&times;</span>
-    <h2>업데이트 v3.6.0</h2>
+    <h2>업데이트 v3.6.1</h2>
     <p>
       • 인기 시스템 개선<br>
       • UI/UX 개선<br>
-      • 업데이트 로그 추가
+      • 업데이트 로그 추가/개선
     </p>
+    <p>업데이트 일시: <span id="updateTime"></span></p>
   </div>
 </div>
 
@@ -222,7 +223,7 @@ footer {
 </div>
 
 <footer>
-  버전 v3.6.0 · 업데이트 2025.12.26
+  버전 v3.6.1
 </footer>
 
 <script>
@@ -362,7 +363,7 @@ search.addEventListener("keydown",e=>{
 });
 
 /* =========================
-   인기순위 (개선)
+   인기순위
 ========================= */
 function rank(){
   const score={};
@@ -370,17 +371,14 @@ function rank(){
   relations.forEach(r=>{
     switch(r.type){
       case "crush":
-        // 짝사랑 당한 사람만 +1
         score[r.to] = (score[r.to]||0)+1;
         break;
       case "dating":
       case "breakup":
-        // 양쪽 +1
         score[r.from] = (score[r.from]||0)+1;
         score[r.to] = (score[r.to]||0)+1;
         break;
       case "mutual":
-        // 서로 짝사랑 → 양쪽 +1
         score[r.from] = (score[r.from]||0)+1;
         score[r.to] = (score[r.to]||0)+1;
         break;
@@ -393,19 +391,25 @@ function rank(){
     .map(e=>`<li>${e[0]} (${e[1]})</li>`)
     .join("");
 }
-
-rank(); // 반드시 호출
+rank();
 
 /* =========================
-   업데이트 모달 제어
+   업데이트 모달 제어 및 시간 표시
 ========================= */
 const modal = document.getElementById("updateModal");
 const closeBtn = document.getElementById("closeBtn");
+const updateTime = document.getElementById("updateTime");
 
+// 현재 날짜·시간 포맷
+const now = new Date();
+const formatted = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ` +
+                  `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+updateTime.textContent = formatted;
+
+// 모달 닫기
 closeBtn.onclick = () => { modal.style.display = "none"; };
 window.onclick = (e) => { if(e.target === modal) modal.style.display = "none"; };
 </script>
 
 </body>
 </html>
-
