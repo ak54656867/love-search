@@ -53,11 +53,40 @@ body.light-mode #recentList li:hover { background:#ccc; }
 #toggleModeBtn:hover { opacity:0.85; }
 
 /* =========================
-   업데이트 모달 스타일
+   업데이트 모달 스타일 수정
 ========================= */
-#updateModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000; }
-#updateModal .modalContent { background:#fff; padding:20px; border-radius:16px; width:400px; max-width:90%; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
-#updateModal #closeBtn { position:absolute; top:10px; right:15px; cursor:pointer; font-weight:bold; font-size:1.2rem; }
+#updateModal { 
+  display:none; 
+  position:fixed; 
+  top:0; left:0; 
+  width:100%; height:100%; 
+  background:rgba(0,0,0,0.6); 
+  justify-content:center; 
+  align-items:center; 
+  z-index:1000; 
+}
+#updateModal .modalContent { 
+  background:#1e1e1e; 
+  color:#f5f5f5; 
+  padding:20px; 
+  border-radius:16px; 
+  width:400px; 
+  max-width:90%; 
+  position:relative; 
+  box-shadow:0 10px 30px rgba(0,0,0,0.3); 
+  transition: all 0.3s;
+}
+body.light-mode #updateModal .modalContent {
+  background:#fff;
+  color:#222;
+}
+#updateModal #closeBtn { 
+  position:absolute; 
+  top:10px; right:15px; 
+  cursor:pointer; 
+  font-weight:bold; 
+  font-size:1.2rem; 
+}
 </style>
 </head>
 
@@ -327,10 +356,11 @@ rank();
    업데이트 모달
 ========================= */
 const updateLog = {
-  version: "v3.9.2",
+  version: "v3.9.3",
   date: "2025-12-26",
   content: [
-    "다크/라이트 모드 전환 기능 추가(3.9.2)"
+    "다크/라이트 모드 전환 기능 추가(3.9.2)",
+     "각종 버그 개선(3.9.3)"
   ]
 };
 
@@ -342,11 +372,9 @@ document.getElementById("modalContent").innerHTML = updateLog.content.map(c=>`�
 // 모달 보여주기
 modal.style.display = "flex";
 
-// 닫기 이벤트
+// 닫기 버튼으로만 모달 닫기
 closeBtn.onclick = () => { modal.style.display="none"; };
-window.onclick = e => { if(e.target===modal) modal.style.display="none"; };
 </script>
 
 </body>
 </html>
-
