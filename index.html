@@ -304,7 +304,25 @@ function rank(){
   rankEl.innerHTML=Object.entries(score).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
 }
 rank();
+   /* =========================
+   업데이트 모달
+========================= */
+const updateLog = {
+  version: "v3.9.1",
+  date: "2025-12-26",
+  content: [
+    "다크/라이트 모드 전환 기능 추가(3.9.1)"
+  ]
+};
+
+const modal = document.getElementById("updateModal");
+const closeBtn = document.getElementById("closeBtn");
+document.getElementById("modalVersion").textContent = `업데이트 ${updateLog.version} · ${updateLog.date}`;
+document.getElementById("modalContent").innerHTML = updateLog.content.map(c=>`• ${c}`).join("<br>");
+closeBtn.onclick = () => { modal.style.display="none"; };
+window.onclick = e => { if(e.target===modal) modal.style.display="none"; };
 </script>
 
 </body>
 </html>
+
