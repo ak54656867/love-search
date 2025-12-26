@@ -2,420 +2,66 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>🤫 Secret Search v5.1.1 🤫</title>
+<title>사이트 이전</title>
 
 <style>
-html,body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont;
-}
-body{
-  min-height:100vh;
-  background:linear-gradient(180deg,#0d0d0d,#1a1a1a);
-  color:#f5f5f5;
-  transition:.3s;
-}
-body.light{
-  background:linear-gradient(180deg,#f5f5f5,#ffffff);
-  color:#222;
-}
-header{
-  text-align:center;
-  padding:30px 10px;
-}
-h1{margin:0;font-size:2.3rem;}
-button{cursor:pointer;}
-
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:20px;
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:20px;
-}
-.card{
-  background:#1e1e1e;
-  border-radius:16px;
-  padding:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,.6);
-  transition:.3s;
-}
-body.light .card{
-  background:#f0f0f0;
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.search-box{
-  display:flex;
-  gap:10px;
-}
-.search-box input{
-  flex:1;
-  padding:14px;
-  font-size:1.1rem;
-  border-radius:12px;
-  border:1px solid #444;
-  background:#2a2a2a;
-  color:#fff;
-}
-body.light .search-box input{
-  background:#fff;
-  color:#222;
-  border:1px solid #ccc;
-}
-.search-box button{
-  padding:14px 18px;
-  border-radius:12px;
-  border:none;
-  background:#4f7cff;
-  color:#fff;
+#site-move {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 999999;
+  text-align: center;
+  font-family: system-ui, sans-serif;
 }
 
-#suggestions{
-  margin-top:6px;
-  background:#2a2a2a;
-  border-radius:10px;
-}
-body.light #suggestions{background:#fff;}
-#suggestions div{
-  padding:6px;
-  cursor:pointer;
-}
-#suggestions div:hover{background:#3b3b3b;}
-body.light #suggestions div:hover{background:#ddd;}
-
-#recentWrapper{
-  margin-top:10px;
-  padding:10px;
-  border-radius:12px;
-  background:#2a2a2a;
-}
-body.light #recentWrapper{background:#e0e0e0;}
-
-#recentList li{
-  display:flex;
-  justify-content:space-between;
-  padding:4px 6px;
-  border-radius:6px;
-  cursor:pointer;
-}
-#recentList li:hover{background:#3b3b3b;}
-body.light #recentList li:hover{background:#ccc;}
-
-#noResult{
-  display:none;
-  text-align:center;
-  color:#ff6b6b;
-  margin:10px 0;
+#site-move h1 {
+  font-size: 90px;
+  margin: 0;
 }
 
-#legend{margin-top:10px;font-size:.95rem;}
-#legend span{margin-right:10px;}
-
-ul{padding-left:20px;}
-li{margin:6px 0;}
-
-#toggleMode{
-  margin-top:10px;
-  padding:8px 16px;
-  border:none;
-  border-radius:12px;
-  background:#4f7cff;
-  color:#fff;
+#site-move .discord {
+  font-size: 36px;
+  margin-top: 30px;
+  font-weight: bold;
 }
 
-/* ===== 관계 그래프 ===== */
-.node{
-  padding:10px 14px;
-  border-radius:20px;
-  font-size:.95rem;
+#site-move .id {
+  font-size: 42px;
+  margin-top: 10px;
+  color: #7289da; /* 디스코드 느낌 색 */
 }
-.node.green{background:#2e7d32;}
-.node.orange{background:#ef6c00;}
-.node.red{background:#c62828;}
-.node.gray{background:#555;}
 
-/* 업데이트 모달 */
-#updateModal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-#updateModal.hidden{display:none;}
-.modal{
-  width:400px;
-  max-width:90%;
-  background:#1e1e1e;
-  padding:20px;
-  border-radius:16px;
-}
-body.light .modal{
-  background:#fff;
-  color:#222;
-}
-.modal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+#site-move p {
+  font-size: 20px;
+  margin-top: 25px;
+  opacity: 0.7;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>🤫 Secret Search 🤫</h1>
-  <button id="toggleMode">라이트 모드</button>
-</header>
-
-<div class="container">
-
-  <div class="card">
-    <div class="search-box">
-      <input id="search" placeholder="이름 검색">
-      <button id="searchBtn">검색</button>
-    </div>
-    <div id="suggestions"></div>
-
-    <div id="recentWrapper">
-      <h4>최근 검색</h4>
-      <ul id="recentList"></ul>
-    </div>
-
-    <p id="noResult">🔍 검색 결과가 없습니다.</p>
-
-    <h3>🔎 검색 결과</h3>
-    <ul id="result"></ul>
-
-    <div id="legend">
-      <span>❤️ 연애</span>
-      <span>💔 과거</span>
-      <span>➡️ 짝사랑</span>
-      <span>🔁 서로</span>
-      <span>⚪ 관계없음</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>🔥 인기순위 TOP 10</h3>
-    <ul id="rank"></ul>
-  </div>
-
-  <!-- 관계 그래프 카드 -->
-  <div class="card" id="graphCard" style="display:none">
-    <h3>🧠 관계 그래프</h3>
-    <div id="graph" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
-    <div style="margin-top:10px;font-size:.9rem">
-      <span style="color:#4caf50">● 초록</span> 내가 좋아함
-      <span style="color:#ff9800;margin-left:10px">● 주황</span> 나를 좋아함/전남친,전여친
-      <span style="color:#f44336;margin-left:10px">● 빨강</span> 경쟁
-      <span style="color:#aaa;margin-left:10px">● 회색</span> 관계없음
-    </div>
-  </div>
-
+<div id="site-move">
+  <h1>사이트 이전</h1>
+  <div class="discord">새로운 주소는 디스코드로 DM</div>
+  <div class="id">wachi0_0</div>
+  <p>디엠 주시면 안내해드립니다</p>
 </div>
-
-<!-- 업데이트 -->
-<div id="updateModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>업데이트 v5.1.2 · 2025-12-26</h3>
-      <span id="closeUpdate" style="cursor:pointer">✖</span>
-    </div>
-    <p>
-      • 관계 그래프 시각화 추가(5.1.1)<br>
-      • 호감/경쟁 관계 자동 색상 분류(5.1.1)<br>
-      • 검색 기능 개선(5.1.2)
-    </p>
-  </div>
-</div>
-
-<script>
-/* 테마 */
-const toggle=document.getElementById("toggleMode");
-toggle.onclick=()=>{
-  document.body.classList.toggle("light");
-  toggle.textContent=document.body.classList.contains("light")?"다크 모드":"라이트 모드";
-};
-
-/* 데이터 */
-const relations=[ /* (네가 준 데이터 그대로) */ 
-  {from:"조민준",to:"문효진",type:"breakup"},
-  {from:"강명구",to:"황혜빈",type:"dating"},
-  {from:"조연아",to:"김도엽",type:"crush"},
-  {from:"손예원",to:"전준형",type:"crush"},
-  {from:"최하린",to:"전준형",type:"crush"},
-  {from:"조연아",to:"전준형",type:"crush"},
-  {from:"양제현",to:"조연아",type:"breakup"},
-  {from:"민정호",to:"이수현",type:"crush"},
-  {from:"최시훈",to:"유동우",type:"mutual"},
-  {from:"최시훈",to:"전준형",type:"dating"},
-  {from:"안진우",to:"최하린",type:"breakup"},
-  {from:"김도엽",to:"최하린",type:"crush"},
-  {from:"손지호",to:"민효주",type:"breakup"},
-  {from:"이믿음",to:"이가율",type:"breakup"},
-  {from:"민정호",to:"조연아",type:"crush"},
-  {from:"조하영",to:"이믿음",type:"crush"},
-  {from:"김동윤",to:"류지우",type:"crush"},
-  {from:"김동윤",to:"손예원",type:"crush"},
-  {from:"정은우",to:"심채원",type:"crush"},
-  {from:"박성제",to:"최하린",type:"crush"},
-  {from:"장건우",to:"신아린",type:"crush"},
-  {from:"박다온",to:"정연재",type:"breakup"},
-  {from:"권희현",to:"박다온",type:"breakup"},
-  {from:"김동윤",to:"황하림",type:"crush"},
-  {from:"방훈태",to:"류지우",type:"crush"},
-  {from:"민효주",to:"전준형",type:"crush"},
-  {from:"민효주",to:"양제현",type:"crush"},
-  {from:"민효주",to:"장건우",type:"crush"},
-  {from:"민효주",to:"김도엽",type:"crush"},
-  {from:"이서윤",to:"전준형",type:"crush"},
-  {from:"류지우",to:"김정훈",type:"crush"},
-  {from:"이서윤",to:"정유준",type:"crush"},
-  {from:"문효진",to:"전준형",type:"crush"},
-  {from:"허동하",to:"손예원",type:"crush"},
-  {from:"김준우",to:"최하린",type:"crush"},
-  {from:"김가영",to:"노무현",type:"crush"},
-  {from:"허동하",to:"이수현",type:"crush"},
-  {from:"허동하",to:"김규리",type:"crush"},
-  {from:"김동건",to:"김재희",type:"crush"},
-  {from:"허동하",to:"최하린",type:"crush"},
-  {from:"강명구",to:"문효진",type:"breakup"},
-  {from:"방훈태",to:"임유리",type:"breakup"},
-  {from:"박경담",to:"조연아",type:"crush"},
-  {from:"김도원",to:"심채원",type:"crush"},
-  {from:"이지우",to:"안진우",type:"dating"},
-  {from:"이믿음",to:"신아린",type:"crush"},
-  {from:"유동우",to:"조하영",type:"crush"},
-  {from:"김도엽",to:"최시훈",type:"crush"},
-  {from:"방훈태",to:"최시훈",type:"crush"},
-  {from:"허동하",to:"신아린",type:"breakup"},
-  {from:"방훈태",to:"황혜빈",type:"breakup"},
-  {from:"김민서",to:"이예나",type:"crush"}
-];
-
-/* 변수 */
-const search=document.getElementById("search");
-const result=document.getElementById("result");
-const noResult=document.getElementById("noResult");
-const recentList=document.getElementById("recentList");
-const suggestions=document.getElementById("suggestions");
-const graphCard=document.getElementById("graphCard");
-const graph=document.getElementById("graph");
-const names=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
-let recent=JSON.parse(localStorage.getItem("recent")||"[]");
-
-/* 최근검색 */
-function renderRecent(){
-  recentList.innerHTML="";
-  recent.forEach(n=>{
-    const li=document.createElement("li");
-    li.innerHTML=`<span>${n}</span><span>❌</span>`;
-    li.children[0].onclick = () => {
-  search.value = n;
-  suggestions.innerHTML = "";   // 자동완성 제거
-  search.focus();               // 포커스 이동
-  run();                         // 즉시 재검색
-};
-    li.children[1].onclick=e=>{
-      e.stopPropagation();
-      recent=recent.filter(x=>x!==n);
-      localStorage.setItem("recent",JSON.stringify(recent));
-      renderRecent();
-    }
-    recentList.appendChild(li);
-  });
-}
-renderRecent();
-
-/* 자동완성 */
-search.oninput=()=>{
-  suggestions.innerHTML="";
-  const q=search.value.trim();
-  if(!q) return;
-  names.filter(n=>n.includes(q)).forEach(n=>{
-    const d=document.createElement("div");
-    d.textContent=n;
-    d.onclick=()=>{search.value=n;suggestions.innerHTML="";run();}
-    suggestions.appendChild(d);
-  });
-}
-
-/* 관계 그래프 */
-function renderGraph(center){
-  graph.innerHTML="";
-  graphCard.style.display="block";
-
-  const likes=relations.filter(r=>r.from===center).map(r=>r.to);
-  const likedBy=relations.filter(r=>r.to===center).map(r=>r.from);
-  const competitors=relations.filter(r=>likes.includes(r.to)&&r.from!==center).map(r=>r.from);
-
-  const all=[...new Set(relations.flatMap(r=>[r.from,r.to]))];
-  all.forEach(p=>{
-    if(p===center) return;
-    let cls="gray";
-    if(likes.includes(p)) cls="green";
-    else if(likedBy.includes(p)) cls="orange";
-    else if(competitors.includes(p)) cls="red";
-
-    const d=document.createElement("div");
-    d.className=`node ${cls}`;
-    d.textContent=p;
-    graph.appendChild(d);
-  });
-}
-
-/* 검색 */
-function run(){
-  const q=search.value.trim();
-  result.innerHTML="";
-  noResult.style.display="none";
-  graphCard.style.display="none";
-  if(!q) return;
-
-  const found=relations.filter(r=>r.from===q||r.to===q);
-  if(!found.length){
-    noResult.style.display="block";
-    return;
-  }
-
-  recent=[q,...recent.filter(x=>x!==q)].slice(0,10);
-  localStorage.setItem("recent",JSON.stringify(recent));
-  renderRecent();
-
-  found.forEach(r=>{
-    const icon=r.type==="dating"?"❤️":r.type==="breakup"?"💔":r.type==="mutual"?"🔁":"➡️";
-    const li=document.createElement("li");
-    li.textContent=`${r.from} ${icon} ${r.to}`;
-    result.appendChild(li);
-  });
-
-  renderGraph(q);
-}
-document.getElementById("searchBtn").onclick=run;
-search.onkeydown=e=>{if(e.key==="Enter")run();}
-
-/* 인기순위 */
-const rank=document.getElementById("rank");
-const score={};
-relations.forEach(r=>{score[r.to]=(score[r.to]||0)+1;});
-rank.innerHTML=Object.entries(score)
-.sort((a,b)=>b[1]-a[1])
-.slice(0,10)
-.map(e=>`<li>${e[0]} (${e[1]})</li>`).join("");
-
-/* 업데이트 닫기 */
-document.getElementById("closeUpdate").onclick=()=>{
-  document.getElementById("updateModal").classList.add("hidden");
-};
-</script>
 
 </body>
 </html>
-
-
